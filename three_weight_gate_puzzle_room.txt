@@ -1,0 +1,101 @@
+Puzzle Room Design: The Three Weight Gate
+
+Overview
+This is a Sokoban-style puzzle room where the player can only push boxes across the floor. Some boxes must be pushed onto floor switches. Each switch activates a moving wall, gate, or platform, eventually opening a path to a treasure chest.
+
+Core Idea
+The player must push three boxes onto three floor switches. Each switch changes part of the room:
+
+1. One switch lowers a wall.
+2. One switch extends a bridge or platform.
+3. One switch opens the final treasure gate.
+
+The player cannot pull boxes, only push them.
+
+Legend
+# = wall
+. = floor
+P = player start
+B = pushable box
+S = floor switch
+G = closed gate / movable wall
+= = moving bridge / platform path
+C = treasure chest
+
+Room Layout
+
+###############
+#P....#.......#
+#..B..#..S....#
+#.....#.......#
+###G#########.#
+#.....B.......#
+#.........S...#
+#.....###.....#
+#..S..#B#..=C#
+#.....#.#..=##
+###############
+
+Puzzle Behavior
+
+Switch 1: Upper-Right Switch
+Location:
+The switch is in the upper-right area of the room.
+
+Effect:
+When a box is pushed onto this switch, the wall marked G lowers.
+
+Purpose:
+This opens access from the starting area into the central chamber.
+
+Switch 2: Right-Middle Switch
+Location:
+The switch is in the right-middle section of the room.
+
+Effect:
+When a box is pushed onto this switch, the bridge or platform marked = extends or rises.
+
+Purpose:
+This creates part of the path toward the treasure chest.
+
+Switch 3: Lower-Left Switch
+Location:
+The switch is near the lower-left section of the room.
+
+Effect:
+When a box is pushed onto this switch, the final treasure gate opens.
+
+Purpose:
+This is the final step needed to make the chest reachable.
+
+Intended Solution
+
+1. Push the first box onto the upper-right switch.
+   This activates the moving wall marked G.
+   The central part of the room becomes accessible.
+
+2. Enter the center chamber and push the second box onto the right-middle switch.
+   This activates the moving bridge or platform near the treasure chest.
+
+3. Free the final boxed-in box from its alcove.
+   The player must approach it from the correct side.
+   Push it onto the lower-left switch.
+
+4. The treasure path opens.
+   The player can now walk across the active bridge or platform.
+   The treasure chest is reachable.
+
+Design Notes
+
+The player should be able to see the chest early, even though it is not reachable at first. This creates a clear goal.
+
+The boxed-in lower box creates an “aha” moment. The player realizes that opening the first wall is not enough; they also need to reposition themselves to free the last box.
+
+Because the player cannot pull boxes, it is possible to make a mistake that traps a box. To avoid frustration, the room should include a reset tile or room reset button near the entrance.
+
+Optional Enhancements
+
+- Add a short visual animation when each switch is pressed.
+- Use a different sound effect for each mechanism.
+- Let the chest sparkle or glow after the final switch is activated.
+- Add floor markings or colored wires connecting each switch to the wall, gate, or platform it controls.

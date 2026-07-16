@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mimi Island — World Map Node Editor</title>
+<style>
+  body { margin:0; background:#16121f; color:#e8e0f0; font-family:system-ui,Arial,sans-serif; }
+  #bar { padding:10px 14px; background:#241a33; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  #bar b { color:#f8d048; }
+  button { background:#4878e8; color:#fff; border:0; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; }
+  button:hover { background:#5a88f8; }
+  button.alt { background:#3a3050; }
+  #hint { font-size:13px; color:#b0a0c8; padding:6px 14px; line-height:1.5; }
+  #wrap { padding:14px; }
+  canvas { border:2px solid #382850; border-radius:6px; cursor:grab; touch-action:none; image-rendering:auto; max-width:100%; }
+  #out { white-space:pre; font-family:ui-monospace,Menlo,monospace; font-size:12px; background:#0e0a16;
+         color:#9adcf8; padding:10px 14px; margin:0 14px 14px; border-radius:6px; overflow:auto; max-height:120px; }
+  .chip { display:inline-block; padding:2px 8px; border-radius:10px; font-size:12px; }
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>Mimi Island Node Editor</b>
+  <button id="save">⬇ Download worldmap_nodes.js</button>
+  <button id="copy" class="alt">Copy values</button>
+  <button id="reset" class="alt">Reset to defaults</button>
+  <label class="alt" style="padding:6px 10px;border-radius:6px;cursor:pointer;">
+    <input type="checkbox" id="pathmode"> path mode (add/drag waypoints)
+  </label>
+  <span id="status" class="chip"></span>
+</div>
+<div id="hint">
+  Drag the four coloured <b>node circles</b> to sit exactly over the painted landmarks.
+  Turn on <b>path mode</b> to click a trail segment to drop a waypoint, drag waypoints to bend Noah's route, or double-click a waypoint to delete it.
+  When happy, click <b>Download</b> and put <b>worldmap_nodes.js</b> in the same folder as the game — reload the game and your positions are used automatically (no rebuild).
+</div>
+<div id="wrap"><canvas id="cv" width="960" height="544"></canvas></div>
+<div id="out"></div>
+<script>
+// game world-map space is 480 x 272; editor shows it at 2x
+const GW = 480, GH = 272, SC = 2;
+const DEFAULTS = {
+  vale:   { x: 158, y: 190, col: '#58c452', label: 'Greenwood Vale' },
+  coast:  { x: 274, y: 212, col: '#f8d048', label: 'Sunsplash Coast' },
+  wastes: { x: 379, y: 90,  col: '#9a62e0', label: 'Starfall Wastes' },
+  canyon: { x: 192, y: 65,  col: '#f89238', label: 'Whistling Canyon' },
+};
+const ORDER = ['vale', 'coast', 'wastes', 'canyon'];
+let nodes = JSON.parse(JSON.stringify(DEFAULTS));
+let paths = {};                       // 'i-j' -> [[x,y],...] in game space
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const statusEl = document.getElementById('status');
+
+const bg = new Image();
+bg.onload = () => { statusEl.textContent = 'map loaded ' + bg.naturalWidth + '×' + bg.naturalHeight; statusEl.style.background = '#2a7a3a'; draw(); };
+bg.onerror = () => { statusEl.textContent = 'worldmap_bg.png NOT found — put this file in the game folder'; statusEl.style.background = '#a83040'; draw(); };
+bg.src = 'worldmap_bg.png';
+
+function key(i, j) { return Math.min(i, j) + '-' + Math.max(i, j); }
+// smooth curve through control points (Catmull-Rom) — matches the game
+function catmullRom(pts, perSeg) {
+  perSeg = perSeg || 14;
+  if (pts.length < 3) return pts.map(p => [p[0], p[1]]);
+  const out = [], n = pts.length;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(n - 1, i + 2)];
+    for (let s = 0; s < perSeg; s++) {
+      const t = s / perSeg, t2 = t * t, t3 = t2 * t;
+      out.push([
+        0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+        0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)]);
+    }
+  }
+  out.push([pts[n - 1][0], pts[n - 1][1]]);
+  return out;
+}
+function g2s(p) { return [p[0] * SC, p[1] * SC]; }       // game -> screen
+function s2g(x, y) { return [Math.round(x / SC), Math.round(y / SC)]; }
+
+function draw() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (bg.complete && bg.naturalWidth) ctx.drawImage(bg, 0, 0, cv.width, cv.height);
+  else { ctx.fillStyle = '#16304a'; ctx.fillRect(0, 0, cv.width, cv.height); }
+  // trail segments (with waypoints)
+  for (let i = 0; i < ORDER.length - 1; i++) {
+    const a = nodes[ORDER[i]], b = nodes[ORDER[i + 1]];
+    const wp = paths[key(i, i + 1)] || [];
+    const curve = catmullRom([[a.x, a.y], ...wp, [b.x, b.y]], 14);
+    ctx.strokeStyle = 'rgba(248,232,88,.9)'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]);
+    ctx.beginPath(); let p = g2s(curve[0]); ctx.moveTo(p[0], p[1]);
+    for (let k = 1; k < curve.length; k++) { p = g2s(curve[k]); ctx.lineTo(p[0], p[1]); }
+    ctx.stroke(); ctx.setLineDash([]);
+    // waypoint handles
+    for (const w of wp) { const s = g2s(w); ctx.fillStyle = '#fff'; ctx.strokeStyle = '#241a33'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(s[0], s[1], 6, 0, 7); ctx.fill(); ctx.stroke(); }
+  }
+  // node handles
+  for (const id of ORDER) {
+    const n = nodes[id], s = g2s([n.x, n.y]);
+    ctx.fillStyle = 'rgba(20,12,30,.55)'; ctx.beginPath(); ctx.arc(s[0], s[1], 16, 0, 7); ctx.fill();
+    ctx.fillStyle = n.col; ctx.beginPath(); ctx.arc(s[0], s[1], 12, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s[0], s[1], 3, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(s[0], s[1], 12, 0, 7); ctx.stroke();
+    ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+    ctx.lineWidth = 3; ctx.strokeStyle = '#16121f'; ctx.strokeText(n.label, s[0], s[1] + 28);
+    ctx.fillStyle = '#fff'; ctx.fillText(n.label, s[0], s[1] + 28);
+    ctx.fillStyle = '#9adcf8'; ctx.font = '11px ui-monospace'; ctx.fillText(n.x + ',' + n.y, s[0], s[1] - 18);
+  }
+  emit();
+}
+
+function emit() {
+  const o = document.getElementById('out');
+  const nObj = {}; for (const id of ORDER) nObj[id] = { x: nodes[id].x, y: nodes[id].y };
+  const pObj = {}; for (const k in paths) if (paths[k] && paths[k].length) pObj[k] = paths[k];
+  o.textContent = 'worldmap_nodes.js  →\n\nwindow.NQ_MAP_OVERRIDE = ' +
+    JSON.stringify({ nodes: nObj, paths: pObj }, null, 1) + ';';
+}
+function fileText() {
+  const nObj = {}; for (const id of ORDER) nObj[id] = { x: nodes[id].x, y: nodes[id].y };
+  const pObj = {}; for (const k in paths) if (paths[k] && paths[k].length) pObj[k] = paths[k];
+  return '// Generated by map_editor.html — node & trail positions for worldmap_bg.png\n' +
+    'window.NQ_MAP_OVERRIDE = ' + JSON.stringify({ nodes: nObj, paths: pObj }, null, 1) + ';\n';
+}
+
+// ---- dragging ----
+let drag = null;     // {type:'node', id} or {type:'wp', seg, idx}
+function pos(e) {
+  const r = cv.getBoundingClientRect();
+  const sx = (e.clientX - r.left) * (cv.width / r.width);
+  const sy = (e.clientY - r.top) * (cv.height / r.height);
+  return [sx, sy];
+}
+function hit(sx, sy) {
+  for (const id of ORDER) { const s = g2s([nodes[id].x, nodes[id].y]); if (Math.hypot(sx - s[0], sy - s[1]) < 15) return { type: 'node', id }; }
+  for (let i = 0; i < ORDER.length - 1; i++) { const wp = paths[key(i, i + 1)] || [];
+    for (let k = 0; k < wp.length; k++) { const s = g2s(wp[k]); if (Math.hypot(sx - s[0], sy - s[1]) < 12) return { type: 'wp', seg: key(i, i + 1), idx: k }; } }
+  return null;
+}
+cv.addEventListener('pointerdown', e => {
+  const [sx, sy] = pos(e); const h = hit(sx, sy);
+  if (h) { drag = h; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; return; }
+  if (document.getElementById('pathmode').checked) {
+    // add a waypoint to the nearest segment at this point
+    let best = null, bestD = 1e9;
+    for (let i = 0; i < ORDER.length - 1; i++) {
+      const a = g2s([nodes[ORDER[i]].x, nodes[ORDER[i]].y]), b = g2s([nodes[ORDER[i + 1]].x, nodes[ORDER[i + 1]].y]);
+      const d = segDist(sx, sy, a, b); if (d < bestD) { bestD = d; best = i; }
+    }
+    if (best !== null && bestD < 60) {
+      const k = key(best, best + 1); paths[k] = paths[k] || [];
+      // insert at the closest position along the polyline order
+      paths[k].push(s2g(sx, sy));
+      draw();
+    }
+  }
+});
+cv.addEventListener('pointermove', e => {
+  if (!drag) { return; }
+  const [sx, sy] = pos(e); const gp = s2g(Math.max(0, Math.min(cv.width, sx)), Math.max(0, Math.min(cv.height, sy)));
+  if (drag.type === 'node') { nodes[drag.id].x = gp[0]; nodes[drag.id].y = gp[1]; }
+  else { paths[drag.seg][drag.idx] = gp; }
+  draw();
+});
+cv.addEventListener('pointerup', e => { drag = null; cv.style.cursor = 'grab'; });
+cv.addEventListener('dblclick', e => {
+  const [sx, sy] = pos(e); const h = hit(sx, sy);
+  if (h && h.type === 'wp') { paths[h.seg].splice(h.idx, 1); draw(); }
+});
+function segDist(px, py, a, b) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+  let t = l2 ? ((px - a[0]) * dx + (py - a[1]) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (a[0] + t * dx), py - (a[1] + t * dy));
+}
+
+document.getElementById('save').onclick = () => {
+  const blob = new Blob([fileText()], { type: 'text/javascript' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'worldmap_nodes.js'; a.click();
+};
+document.getElementById('copy').onclick = () => {
+  navigator.clipboard.writeText(fileText()).then(() => { statusEl.textContent = 'copied to clipboard!'; statusEl.style.background = '#2a7a3a'; });
+};
+document.getElementById('reset').onclick = () => { nodes = JSON.parse(JSON.stringify(DEFAULTS)); paths = {}; draw(); };
+draw();
+</script>
+</body>
+</html>

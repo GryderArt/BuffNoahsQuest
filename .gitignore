@@ -1,0 +1,6 @@
+# transient outputs (test screenshots + auditor artifacts)
+shots/
+audits/
+__pycache__/
+*.lnk
+node_modules/
