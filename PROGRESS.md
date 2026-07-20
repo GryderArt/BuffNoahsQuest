@@ -2378,3 +2378,8 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
 - Verified: build OK; stormcrow sprite builds; the Condor sprite + CREATURES entry are untouched and
   still catchable; stormcrow is NOT a catchable creature; _ascent + smoke + validate (737/58) green;
   side-by-side sprite render confirms the two birds read as clearly different.
+- PUBLISHED (same day): the full project is now on GitHub — https://github.com/GryderArt/BuffNoahsQuest
+  — with a public play link via GitHub Pages: https://gryderart.github.io/BuffNoahsQuest/ (index.html
+  redirects to BuffNoahsQuest_v4.html). Pages serves the gh-pages branch; to update the LIVE game,
+  push to BOTH: `git push origin main && git push origin main:gh-pages`. shots/ and audits/ are
+  gitignored (transient outputs).
