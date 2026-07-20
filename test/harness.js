@@ -52,7 +52,7 @@ const H = {
   startPlay() {
     NQ.Game.state = 'title';
     this.press('z');
-    if (NQ.Game.state === 'intro') this.press('z');   // skip the opening cutscene
+    if (NQ.Game.state === 'intro') this.press('x');   // X skips the whole opening (SPACE only advances a beat)
     if (NQ.Game.state !== 'play') throw new Error('did not enter play state');
   },
   assert(cond, msg) {

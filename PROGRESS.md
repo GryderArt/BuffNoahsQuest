@@ -2383,3 +2383,28 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   redirects to BuffNoahsQuest_v4.html). Pages serves the gh-pages branch; to update the LIVE game,
   push to BOTH: `git push origin main && git push origin main:gh-pages`. shots/ and audits/ are
   gitignored (transient outputs).
+
+## v10.27 (2026-07-16) — THE OPENING, remade: a SPACE-paced storybook cutscene
+- The 21-second auto-timer intro is gone. The new opening (src/12b_intro.js, overriding
+  UI.drawIntro house-style) is SEVEN beats the reader paces themselves: SPACE/Z/ENTER/click
+  first completes the type-on caption, then advances; X or ESC skips the whole thing; beat
+  pips top-right show where you are. Full-bleed cinema (no HUD panel), letterboxed, with a
+  typed caption band (26 chars/sec — a six-year-old reads along, a grown-up reads aloud).
+- The beats: (1) DAWN — Noah's real side-view WALK CYCLE chasing a bouncing Ramsi around
+  the meadow, hearts + butterflies; (2) THE HUG with orbiting hearts; (3) the sky turns
+  DARK — wind leaves, boiling clouds, back-view Noah, trembling Ramsi; (4) SAHOR STRIKES —
+  swoop, guaranteed lightning CRACK + screen shake at the grab, Ramsi carried off in a
+  drawn golden birdcage; (5) THE CHASE toward the far Rainbow Spire (drawn spire + rainbow),
+  dust puffs; (6) THE VOW — night sky, stars, glowing spire, cliff silhouette, courage
+  sparkles; (7) title card — radiant beams, icon parade of the tools/gear to come, PLAY!
+- AUDIO: new stingers in 03_audio (dawnrise, thunderroll w/ noise crack+roll, swoopdown,
+  snatch, sadsting, bravesting) + a sparse low SONGS.storm; the opening scores itself
+  title -> storm (at the darkening) -> title (at the card), then hands off to zone music.
+- ART HOOKS (Sheet 18, prompts at the bottom of SHEET_PROMPTS.md): the beats check
+  Sprites.scenes.intro_vale / intro_storm and Sprites.props.introhug / introsahorfly /
+  introcage / intronoahbrave / intronoahdash / introspire and upgrade automatically;
+  import_art.py gained SHEETS['introart'], the six ASSET_SIZES, and a SCENES table that
+  smooth-resizes the two backdrops (no manual sizer step anymore).
+- Tests: harness startPlay now skips the opening with X; pixels.js beats updated (asserts
+  SPACE advances ONE beat and X skips). pixels smoke validate features playthrough
+  underburrow all green. Screenshots: shots/intro_beat0..6.png.

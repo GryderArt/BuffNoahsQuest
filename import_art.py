@@ -328,6 +328,22 @@ SHEETS['aqobjects'] = {'cols': 2, 'rows': 2, 'dens': 4, 'keys': [
 SHEETS['newart12'] = {'cols': 3, 'rows': 2, 'dens': 4, 'keys': [
   'creature.lanterna.a', 'creature.glowfish.a', 'creature.stormcrow.a',
   'item.goldnugget', 'item.crystalshard', 'item.voidgem']}
+# Sheet 18: the OPENING CUTSCENE poses (props so installExtSprite files them under Sprites.props)
+SHEETS['introart'] = {'cols': 3, 'rows': 2, 'dens': 4, 'keys': [
+  'prop.introhug', 'prop.introsahorfly', 'prop.introcage',
+  'prop.intronoahbrave', 'prop.intronoahdash', 'prop.introspire']}
+ASSET_SIZES.update({
+  'prop.introhug': [24, 20], 'prop.introsahorfly': [26, 22], 'prop.introcage': [16, 14],
+  'prop.intronoahbrave': [16, 20], 'prop.intronoahdash': [18, 20], 'prop.introspire': [22, 30],
+})
+
+# ---- painted scene.* backdrops: smooth LANCZOS resize (NEVER grid-snapped) ----
+# Drop assets/raw/scene.<name>.png and, if listed here, import_art resizes it to the
+# target and writes assets/scene.<name>.png. (Other scene.* raws keep their manual flow.)
+SCENES = {
+  'scene.intro_vale': (960, 544),
+  'scene.intro_storm': (960, 544),
+}
 
 
 def find_sprites(im):
@@ -552,6 +568,15 @@ def main():
         if not f.lower().endswith('.png'): continue
         if f.lower().endswith('.big.png'): continue   # handled in the .big override pass below
         key = f[:-4].lower()
+        if key in SCENES:                              # painted backdrop: smooth resize, no snapping
+            tw, th = SCENES[key]
+            try:
+                im = Image.open(os.path.join(RAW, f)).convert('RGB')
+                im.resize((tw, th), Image.LANCZOS).save(os.path.join(OUT, key + '.png'))
+                print('SCENE %-23s -> assets/%s.png  (%dx%d smooth)' % (f, key, tw, th)); done += 1
+            except Exception as e:
+                print('FAIL %-24s %s' % (f, e)); errs += 1
+            continue
         if key.startswith('sheet.'):
             name = key[6:]
             if name in SHEETS:

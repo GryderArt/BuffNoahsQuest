@@ -158,6 +158,7 @@ const UI = {
     return false;
   },
   handleClick(x, y) {
+    if (Game.state === 'intro') { if (Game.introAdvance) Game.introAdvance(); return; }
     if (Game.state === 'cutscene') { if (Game.advanceCutscene) Game.advanceCutscene(); return; }
     if (Game.state === 'dialog') { if (Game.advanceDialog) Game.advanceDialog(); return; }
     const st = Game.state;

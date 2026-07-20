@@ -824,3 +824,75 @@ start from a bigger painting:
     PY
 Once embedded, it paints behind the UNDERBURROW overview map automatically (UI.drawBurrowMap
 falls back to the old procedural strata until the art is present).
+
+
+---
+
+## SHEET 18 — `sheet.introart.png` — THE OPENING CUTSCENE poses (3 cols x 2 rows)
+
+Save as: **`assets/raw/sheet.introart.png`** — then `python3 import_art.py && python3 build.py`.
+The new SPACE-paced opening plays with sprite-composed stand-ins until this sheet exists;
+every cell below replaces its stand-in automatically.
+
+```
+Generate sheet image INTROART, size 1536x1024 (landscape), TRANSPARENT background,
+invisible grid of 3 columns x 2 rows. Same house rules as always: one sprite per cell,
+centred, ~70% fill, NOTHING touches a cell border, 1-cell PLUM #241a33 outline, flat
+colors, chunky kid-friendly pixel art, no text, no ground planes. The hero NOAH is the
+same cheerful over-muscled blond boy as ever (blue tee with red camo patches, dark gray
+pants); RAMSI is the light Carolina-blue plush-ram with small gold horns and a white
+face panel. Cell contents (left to right, top to bottom; "design WxH" = tiny pixel grid):
+
+- R1C1: [design 24x20] THE HUG — Noah kneeling, arms wrapped around RAMSI in a big warm
+  hug; Ramsi's eyes closed and happy; one or two tiny pink hearts floating just above
+  their heads (WIDE, the sweetest thing you have ever drawn)
+- R1C2: [design 26x22] SAHOR IN FLIGHT — MIMI SAHOR the blue ram-imp (big golden curling
+  horns, white face, pink blush, gold chain) flying with small dark bat-wings spread,
+  facing LEFT, gripping a small golden birdcage that dangles below on a short chain;
+  a sly grin (WIDE — this is the villain snatch moment, menacing but cute, never scary)
+- R1C3: [design 16x14] RAMSI CAGED — RAMSI squeezed sadly inside that same golden
+  birdcage, ears drooping, one hoof on the bars, big glossy worried eyes
+- R2C1: [design 16x20] BRAVE NOAH — Noah standing side view FACING RIGHT, fists clenched
+  at his sides, chin up, hair swept by wind, tiny determination sparkle in his eye
+- R2C2: [design 18x20] NOAH DASH — Noah sprinting side view FACING RIGHT, leaning hard
+  into the run, one arm pumped forward, a little dust puff behind his back foot
+- R2C3: [design 22x30] THE RAINBOW SPIRE — the far-off landmark where Ramsi is taken: a
+  tall elegant crystal spire on a tiny floating island, a small RAINBOW arcing through
+  its peak, a few sparkles (TALL — it should look impossibly far away and magical)
+```
+
+## SCENES 18a/18b — the opening backdrops (painted smooth, NOT snapped)
+
+Save as: **`assets/raw/scene.intro_vale.png`** and **`assets/raw/scene.intro_storm.png`**
+(processed down the smooth scene path like scene.burrowbg — any size ~1500x800+ works,
+they get LANCZOS-resized to 960x544).
+
+```
+Two matching painterly STORYBOOK backdrops of the same place, ~1536x816 each, in the
+exact same illustrated style as the game's other painted scenes (warm gouache, chunky
+shapes, plum-black #241a33 line accents, NO characters, NO text). The place: Noah's
+home meadow in GREENWOOD VALE — rolling green hills, a cozy thatched cottage with a
+crooked chimney off to ONE side, a big friendly oak, a low wooden fence, wildflowers.
+Keep the lower CENTER of the image fairly open and calm (the animated characters and
+the caption text play there), and keep the bottom ~15% simple.
+
+18a GOLDEN MORNING (scene.intro_vale.png): sunrise gold and honey light, long soft
+shadows, a few dawn clouds catching pink, smoke curling gently from the chimney,
+butterflies implied with a few bright flecks. It should feel like the happiest,
+safest morning in the world.
+
+18b THE STORM COMES (scene.intro_storm.png): the SAME composition swallowed by a
+sudden storm — bruised purple-and-teal thunderheads boiling overhead, the gold light
+squeezed to a thin bright seam on the horizon, wind-bent grass and flying leaves, one
+jagged lightning fork far behind the cottage, warm window light glowing brave against
+the dark. Dramatic, but storybook-dramatic — never horror.
+```
+
+> Import wiring (ALREADY DONE in import_art.py — just drop the files and run
+> `python3 import_art.py && python3 build.py`):
+> SHEETS['introart'] slices the cells to prop.introhug / prop.introsahorfly /
+> prop.introcage / prop.intronoahbrave / prop.intronoahdash / prop.introspire (dens 4),
+> and import_art now smooth-processes the two scenes itself (SCENES table) to
+> assets/scene.intro_vale.png + assets/scene.intro_storm.png at 960x544 — no manual
+> sizer needed. The opening's draw code checks Sprites.props.intro* and
+> Sprites.scenes.intro_* first and falls back to sprite-composed stand-ins until then.

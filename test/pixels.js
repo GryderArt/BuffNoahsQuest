@@ -38,13 +38,16 @@ H.render();
 H.assert(hasColorNear(40, 80, 300, 100, [248, 208, 72], 30), 'title: gold title text pixels');
 H.shot('00_title');
 
-// 2. new game -> the intro cutscene plays, then skips to play
+// 2. new game -> the SPACE-paced opening plays; X skips the whole thing
 H.press('z');
 H.assert(Game.state === 'intro', 'new game opens the intro cutscene');
-NQ.Game.introT = 1.4; H.render(); H.shot('00b_intro_cuddle');
-NQ.Game.introT = 16.5; H.render(); H.shot('00c_intro_worldmap');
+NQ.Game.intro = { i: 0, t: 1.2, fx: {}, entered: 0 }; H.render(); H.shot('00b_intro_dawn');
+NQ.Game.intro = { i: 3, t: 1.3, fx: {}, entered: 3 }; H.render(); H.shot('00c_intro_snatch');
+NQ.Game.intro.t = 9;                       // caption fully typed -> SPACE advances a beat
 H.press(' ');
-H.assert(Game.state === 'play', 'intro skips to play');
+H.assert(Game.state === 'intro' && NQ.Game.intro.i === 4, 'SPACE advances one beat (self-paced)');
+H.press('x');
+H.assert(Game.state === 'play', 'X skips the whole opening to play');
 assertPlayerVisible('vale spawn');
 H.shot('01_vale_start');
 

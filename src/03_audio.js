@@ -83,10 +83,20 @@ const Audio2 = {
       cage:    [[0,.1,-2],[ .1,.15,5]],
       talk:    [[0,.05,12]],
       step:    [],
+      // --- opening-cutscene stingers (12b_intro) ---
+      dawnrise:   [[0,.18,0],[ .18,.18,4],[ .36,.5,9]],
+      thunderroll:[[0,.6,-31],[ .15,.5,-34],[ .4,.7,-29]],
+      swoopdown:  [[0,.08,21],[ .07,.08,14],[ .14,.08,7],[ .21,.14,0],[ .33,.2,-7]],
+      snatch:     [[0,.06,24],[ .06,.06,12],[ .12,.22,-5]],
+      sadsting:   [[0,.28,4],[ .3,.3,0],[ .62,.6,-5]],
+      bravesting: [[0,.12,0],[ .12,.12,7],[ .24,.36,12]],
     };
     const s = seqs[name]; if (!s) return;
-    for (const [dt, dur, semi] of s) this.note(F(semi), t + dt, dur, name === 'hurt' || name === 'denied' ? 'sawtooth' : 'square', 0.5);
+    const wave = (name === 'hurt' || name === 'denied' || name === 'thunderroll') ? 'sawtooth'
+      : (name === 'sadsting' || name === 'dawnrise') ? 'triangle' : 'square';
+    for (const [dt, dur, semi] of s) this.note(F(semi), t + dt, dur, wave, 0.5);
     if (name === 'capture') this.noise(t + 0.3, 0.3, 0.18);
+    if (name === 'thunderroll') { this.noise(t, 0.9, 0.5); this.noise(t + 0.45, 0.8, 0.3); }   // the CRACK + rolling tail
   },
   // --- BGM: simple looping pattern per zone ---
   SONGS: {
@@ -99,6 +109,8 @@ const Audio2 = {
     boss:   { tempo: 152, bass: [-26,-26,-19,-19], mel: [-2,3,-2,5, -2,3,-2,7, -2,3,-2,5, 8,7,5,3], type:'sawtooth' },
     road:   { tempo: 148, bass: [-17,-12,-15,-10], mel: [7,7,12,7, 14,12,9,7, 9,9,14,9, 16,14,12,9], type:'square' },
     title:  { tempo: 96,  bass: [-24,-19,-17,-12], mel: [4,7,12,7, 16,12,7,4, 4,7,12,16, 19,16,12,7], type:'square' },
+    // sparse, low and uneasy — the sky-turns-dark beats of the opening
+    storm:  { tempo: 72,  bass: [-33,-33,-29,-31], mel: [null,-9,null,-12, null,-7,null,-9, null,-5,null,-9, null,-12,null,-14], type:'sawtooth' },
   },
   playSong(name) {
     this.ensure();

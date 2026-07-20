@@ -176,7 +176,7 @@ function newGame() {
   Player.maxHearts = 6; Player.hearts = 6;
   Game.loadMap('vale');
   Game.flags.ramsiIntro = true;
-  Game.state = 'intro'; Game.introT = 0;
+  Game.state = 'intro'; Game.introT = 0; Game.intro = null;   // fresh beat state for the opening
 }
 
 Game.saveSlot = 0; Game.titleSlot = 0;
@@ -225,13 +225,8 @@ function updateGame(dt) {
     return;
   }
   if (Game.state === 'intro') {
-    Game.introT = (Game.introT || 0) + dt;
-    if (Game.introT > 21.5 || presses.includes(' ') || presses.includes('z') || presses.includes('x') || presses.includes('Enter')) {
-      Game.state = 'play';
-      Game.banner('SAHOR stole RAMSI — he is caged beyond the RAINBOW SPIRE! Master EVERY power of movement to win him back.');
-      Game.toast('First: help Granny with her sheep (by the cottage).');
-      saveGame();
-    }
+    if (presses.length) Audio2.ensure();
+    Game.updateIntro(dt, presses);   // SPACE-paced beats (12b_intro.js); X/ESC skips
     return;
   }
   if (Game.state === 'credits') {
