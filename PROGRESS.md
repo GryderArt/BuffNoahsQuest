@@ -2469,3 +2469,24 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   green; audit canyon 0/0; screenshots bk_canyon_floor/mid/summit/secret.
 - Follow-up: worldmap_nodes.js re-tuned by Berkley in map_editor.html — node dots + walking-trail
   waypoints now match the repainted island exactly (verified in game by him).
+
+## v10.31 (2026-07-20) — TOUCH CONTROLS: the game goes mobile
+- src/32b_touch.js — full touch layer, auto-detected for phones/tablets (?touch=1/0 overrides;
+  touch-screen laptops keep the keyboard UI). Everything funnels through the same KEYS /
+  PRESS_QUEUE / CLICK_QUEUE the keyboard uses — zero game-logic changes.
+- Twin-circle semi-transparent JOYSTICK lower-left drives the arrow keys (30% dead zone,
+  8-way); hidden during dialogs/menus so it never sits on the portrait.
+- The HUD QUEST box becomes an action pad: big Z (TOOL), X (JUMP), C (RAMSI) buttons +
+  a SPACE bar (TALK/CHECK). Side-scroller/ascent/aviary have no panel, so they get a
+  floating pad bottom-right instead. Buttons hold-and-release like real keys.
+- "..." button top-right opens a menu: PACK (I), OUTFIT (U), MAP (ESC), QUEST (re-reads the
+  hint as a Noah dialog, since the quest box is now buttons), MUSIC (P), FULLSCREEN (F).
+- Taps anywhere else are normal clicks — tool icons, title slots, world-map nodes, pack
+  arrows, dialog-advance all already worked with clicks.
+- 00_boot: TOUCH devices use exact-fit (fractional) SCALE like fullscreen — an integer
+  floor wasted half a phone screen. build.py: viewport meta + touch-action/user-select CSS.
+- Title on touch says "TAP a slot to play!"; portrait phones get a "TURN SIDEWAYS" nudge.
+- Verified: 21-check playwright run (emulated iPhone landscape + portrait + desktop) —
+  detection, slot-tap start, tap-through intro, joystick walk, Z/X/C/SPACE press+release,
+  menu items (pack/map/quest/close), desktop untouched with zero touch chrome; all 44 node
+  suites green; editor test green; screenshots touchshots/m1-m10.

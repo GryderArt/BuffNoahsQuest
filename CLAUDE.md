@@ -142,6 +142,14 @@ assets/raw/<art>.png  --(python3 import_art.py)-->  assets/<key>.png  --(python3
   mottle AI). Shared tricks: sw_* m.puzzle entries for permanent effects; asteroidCovers
   wraps for dynamic bridges; wrapper CHAINS on updateBurrowAbilities/ramsiCommand/up_warden
   (order matters: files must sort AFTER 15_underburrow to wrap, not be clobbered).
+- **`32b_touch`** TOUCH CONTROLS (phones/tablets; `G.NQ_TOUCH` detection, `?touch=1/0` override).
+  Feeds the SAME KEYS/PRESS_QUEUE/CLICK_QUEUE as the keyboard — never add touch-only logic
+  elsewhere. Joystick lower-left (arrow keys, hidden outside play/side/ascent/aviary);
+  `UI.drawTouchPad` replaces the QUEST box (11_ui branches on NQ_TOUCH) with Z/X/C + SPACE;
+  floating pad bottom-right in panel-less states; "..." menu top-right (pack/outfit/map/
+  quest-as-dialog/music/fullscreen). Wraps `render` (overlay) + `bootCanvas` (listeners);
+  00_boot uses fractional SCALE when NQ_TOUCH. Test: `/tmp/touchtest.js` (playwright,
+  emulated iPhone + desktop, 21 checks).
 
 ---
 

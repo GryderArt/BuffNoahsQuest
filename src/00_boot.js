@@ -27,9 +27,10 @@ function bootCanvas() {
     const availW = (G.innerWidth || SW * 2), availH = (G.innerHeight || SH * 2);
     const s = Math.min(availW * dpr / SW, availH * dpr / SH);
     const fs = !!(typeof document !== 'undefined' && document.fullscreenElement);
-    // windowed: crisp integer pixels; FULLSCREEN: exact fit — fill every inch the
-    // aspect allows (the renderer scales by transform, so fractions are fine)
-    SCALE = fs ? Math.max(1, s) : Math.max(1, Math.floor(s));
+    // windowed: crisp integer pixels; FULLSCREEN or TOUCH devices: exact fit — fill
+    // every inch the aspect allows (the renderer scales by transform, fractions are
+    // fine, and a phone at integer scale would waste half its tiny screen)
+    SCALE = (fs || G.NQ_TOUCH) ? Math.max(1, s) : Math.max(1, Math.floor(s));
     canvas.width = Math.round(SW * SCALE); canvas.height = Math.round(SH * SCALE);
     canvas.style.width = (canvas.width / dpr) + 'px';
     canvas.style.height = (canvas.height / dpr) + 'px';

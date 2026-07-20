@@ -69,16 +69,21 @@ const UI = {
     dspr(c, Sprites.items.key, X + 104, hy); drawText(c, '' + F.keys, X + 114, hy - 1, 9, '#f8d048');
     drawText(c, 'HP:' + F.heartpieces + '/4', X + 130, hy - 1, 8, '#f898c8');
     hy += 14;
-    // quest hint — stretches into the space freed by GEAR + the version stamp
-    const qh = Math.max(74, SH - 16 - hy);
-    c.fillStyle = '#181020'; c.fillRect(X + 6, hy, PANEL_W - 12, qh);
-    c.strokeStyle = '#f8d048'; c.strokeRect(X + 6.5, hy + 0.5, PANEL_W - 13, qh - 1);
-    drawText(c, '! QUEST', X + 10, hy + 3, 8, '#f8d048');
-    c.font = 'bold 8px monospace';
-    const lines = wrapText(c, Game.questHint(), PANEL_W - 24);
-    lines.slice(0, Math.max(7, Math.floor((qh - 18) / 9))).forEach((l, i) => drawText(c, l, X + 10, hy + 14 + i * 9, 8, '#fff'));
-    // controls hint (gear + log + baits live in YOUR PACK — press I)
-    drawText(c, 'I:pack ESC:map P:music F:full', X + 8, SH - 12, 7, '#a89cc0');
+    // quest hint — stretches into the space freed by GEAR + the version stamp.
+    // TOUCH devices trade this spot for the Z/X/C + SPACE action pad (32b_touch;
+    // the quest text moves into the "..." menu's QUEST item).
+    if (G.NQ_TOUCH && UI.drawTouchPad) { UI.drawTouchPad(c); }
+    else {
+      const qh = Math.max(74, SH - 16 - hy);
+      c.fillStyle = '#181020'; c.fillRect(X + 6, hy, PANEL_W - 12, qh);
+      c.strokeStyle = '#f8d048'; c.strokeRect(X + 6.5, hy + 0.5, PANEL_W - 13, qh - 1);
+      drawText(c, '! QUEST', X + 10, hy + 3, 8, '#f8d048');
+      c.font = 'bold 8px monospace';
+      const lines = wrapText(c, Game.questHint(), PANEL_W - 24);
+      lines.slice(0, Math.max(7, Math.floor((qh - 18) / 9))).forEach((l, i) => drawText(c, l, X + 10, hy + 14 + i * 9, 8, '#fff'));
+      // controls hint (gear + log + baits live in YOUR PACK — press I)
+      drawText(c, 'I:pack ESC:map P:music F:full', X + 8, SH - 12, 7, '#a89cc0');
+    }
   },
   drawBannersToasts(c, dt) {
     for (let i = Game.banners.length - 1; i >= 0; i--) {
@@ -572,10 +577,11 @@ const UI = {
       this.hot.push({ x: 28, y: sy - 3, w: sum ? 368 : 396, h: 17, fn: () => { Game.titleSlot = n; Game.enterSlot('auto'); } });
       if (sum) this.hot.push({ x: 398, y: sy - 3, w: 26, h: 17, fn: () => { Game.titleSlot = n; Game.eraseSlot(n); } });
     }
-    drawText(c, '\u2191\u2193 pick   ENTER / click  play   N new game   X erase', 30, 226, 8, '#a89cc0');
+    if (G.NQ_TOUCH) drawText(c, 'TAP a slot to play!   [X] erases', 30, 226, 8, '#a89cc0');
+    else drawText(c, '\u2191\u2193 pick   ENTER / click  play   N new game   X erase', 30, 226, 8, '#a89cc0');
     // (the dev quick-start key hints are hidden; the G/T/U/C keys themselves still work)
-    { const gp = Game.Gamepad, on = gp && gp.connected; drawText(c, (on ? '\u25B6 CONTROLLER READY' : 'USB controller? plug it in') + '  \u2014  K: button setup', 30, 262, 8, on ? '#8ef0c0' : '#f8b048'); }
-    if (!ANY_KEY_PRESSED && Game.time > 4) drawText(c, 'No keys? Open this .html in Chrome/Edge directly.', 30, 250, 7, '#e84a4a');
+    if (!G.NQ_TOUCH) { const gp = Game.Gamepad, on = gp && gp.connected; drawText(c, (on ? '\u25B6 CONTROLLER READY' : 'USB controller? plug it in') + '  \u2014  K: button setup', 30, 262, 8, on ? '#8ef0c0' : '#f8b048'); }
+    if (!G.NQ_TOUCH && !ANY_KEY_PRESSED && Game.time > 4) drawText(c, 'No keys? Open this .html in Chrome/Edge directly.', 30, 250, 7, '#e84a4a');
     drawText(c, VERSION, 432, SH - 10, 7, '#7a6a96');
   },
   drawCredits(c, t) {

@@ -77,10 +77,12 @@ with open(os.path.join(HERE, 'game.js'), 'w', encoding='utf-8') as f:
 
 HEAD = (
     '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+    '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">\n'
     "<title>Buff Noah's Quest - VERSION 4</title>\n<style>\n"
-    '  html,body { margin:0; padding:0; background:#1a1426; height:100%; overflow:hidden; }\n'
-    '  #wrap { display:flex; align-items:center; justify-content:center; height:100vh; }\n'
-    '  canvas { image-rendering:pixelated; image-rendering:crisp-edges; outline:none; }\n'
+    '  html,body { margin:0; padding:0; background:#1a1426; height:100%; overflow:hidden; overscroll-behavior:none; }\n'
+    '  #wrap { display:flex; align-items:center; justify-content:center; height:100vh; height:100dvh; }\n'
+    '  canvas { image-rendering:pixelated; image-rendering:crisp-edges; outline:none; touch-action:none;\n'
+    '           -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }\n'
     '</style>\n</head>\n<body>\n'
     '<div id="wrap"><canvas id="game" tabindex="0"></canvas></div>\n'
     '<script>window.NQ_MAP_OVERRIDE=null;</script>\n'

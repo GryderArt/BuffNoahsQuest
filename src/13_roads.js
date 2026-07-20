@@ -1233,7 +1233,7 @@ const SideScroll = {
         c.restore();
       }
     }
-    drawText(c, 'X: jump', SW - 52, 9, 8, '#9a90b8', '#241a33');
+    if (!G.NQ_TOUCH) drawText(c, 'X: jump', SW - 52, 9, 8, '#9a90b8', '#241a33');   // touch: the X button IS the hint (and ... sits there)
   },
 };
 // pinned-hint defaults for the classic road bosses (cog bosses register theirs in 19b)
