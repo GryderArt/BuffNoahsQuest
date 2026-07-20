@@ -2467,3 +2467,5 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   time it could show). It now lifts with the terrain like every other object drawer.
 - Verified: build embeds the edit; validate (740/58) smoke playthrough pixels _materials
   green; audit canyon 0/0; screenshots bk_canyon_floor/mid/summit/secret.
+- Follow-up: worldmap_nodes.js re-tuned by Berkley in map_editor.html — node dots + walking-trail
+  waypoints now match the repainted island exactly (verified in game by him).
