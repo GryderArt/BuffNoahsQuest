@@ -48,6 +48,10 @@
     T(m, 35, 12, 'prismshard', 3);
     T(m, 46, 12, 'prismshard', 3);
     CHEST(m, 34, 11, { gems: 10 });
+    // Berkley's SECRET: a tiny sky pad hides in the far NW corner of the rift — no sign,
+    // no trail, just a glint for sharp-eyed flyers. A CRYSTAL SHARD (craft material) waits.
+    R(m, 1, 1, 2, 2, 'prismfloor', 3);
+    OBJ(m, { type: 'material', mat: 'crystalshard', x: 2, y: 2, id: 'mat_crystalshard_canyonsky' });
     SIGN(m, 35, 10, "THE CRYSTAL CROWN! Sahor's tower BLOOMS right out of the old red rock. FLAP (X, again and again) across the sky to walk its balconies!");
     // the rainbow + ambient sparkle over the tip (pure spectacle)
     OBJ(m, { type: 'crownrainbow', x: 41, y: 1, deco: true });   // rainbow in the open sky over the tip (not a reachability target)

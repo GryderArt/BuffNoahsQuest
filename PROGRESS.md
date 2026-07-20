@@ -2455,3 +2455,15 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   48x52 with elev + 22 objects) + screenshot; full ROUND-TRIP test (canyon.edit.json →
   build embeds → harness sees the repaint → validate smoke playthrough + audit canyon all
   green → test edit removed, clean rebuild verified). BOOTSTRAP.md documents the flow.
+
+## v10.30 (2026-07-20) — Berkley's first level edit ships (+ a secret in the sky)
+- customlevels/canyon.edit.json — WHISTLING CANYON repainted by Berkley in the new level
+  editor (smoother wavier terraces, cleaned-up strata) — embedded via the MAP_EDITS pipeline.
+- His hidden 2x2 sky pad in the far NW rift corner is now canon: 06c also paints it in code
+  (so the secret survives even without the edit file) and a CRYSTAL SHARD craft material
+  waits on it (mat_crystalshard_canyonsky) — no sign, no trail, wings-only. Sharp eyes only.
+- BUG FIX found by the secret: Game.OBJDRAW.material ignored the elevation arg, so a material
+  on elev-3 ground drew 42px below its pad (every previous material sat at elev 0 — first
+  time it could show). It now lifts with the terrain like every other object drawer.
+- Verified: build embeds the edit; validate (740/58) smoke playthrough pixels _materials
+  green; audit canyon 0/0; screenshots bk_canyon_floor/mid/summit/secret.

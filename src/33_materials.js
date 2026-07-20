@@ -63,18 +63,19 @@
 
   // ---- the floating pickup art (mirrors the shard drawer) ----
   Game.OBJDRAW = Game.OBJDRAW || {};
-  Game.OBJDRAW.material = function (c, o, ox, oy) {
+  Game.OBJDRAW.material = function (c, o, ox, oy, e) {
     if (Game.flags.matsFound[o.id]) return;                       // already grabbed: gone
     const spr = Sprites.items[o.mat]; if (!spr) return;
+    const oy2 = oy - (e || 0);                                    // lift with elevated terrain (e = elev*EOFF)
     const t = Game.time, bob = Math.sin(t * 2.4 + o.x) * 2;
     // a soft glow so it reads as a treasure across a big map
     c.save(); c.globalCompositeOperation = 'lighter';
     c.fillStyle = 'rgba(248,236,140,' + (0.16 + 0.08 * Math.sin(t * 3 + o.y)).toFixed(2) + ')';
-    c.beginPath(); c.arc(ox + 8, oy + 6 + bob, 10, 0, 7); c.fill(); c.restore();
+    c.beginPath(); c.arc(ox + 8, oy2 + 6 + bob, 10, 0, 7); c.fill(); c.restore();
     const sc = 1.5, w = sprW(spr), h = sprH(spr);
-    c.save(); c.translate(ox + 8, oy + 8 + bob); c.scale(sc, sc); dspr(c, spr, -w / 2, -h / 2); c.restore();
-    if ((t * 2 | 0) % 3 === 0) { c.fillStyle = '#fff'; c.fillRect(ox + 2 + ((t * 31 | 0) % 12), oy - 2 + bob, 1, 1); }
-    if (dist(Player.x, Player.y, ox + 8, oy + 8) < 30) drawText(c, MAT_NAMES[o.mat], ox + 8, oy - 12, 6, '#f8e858', '#241a33', 'center');
+    c.save(); c.translate(ox + 8, oy2 + 8 + bob); c.scale(sc, sc); dspr(c, spr, -w / 2, -h / 2); c.restore();
+    if ((t * 2 | 0) % 3 === 0) { c.fillStyle = '#fff'; c.fillRect(ox + 2 + ((t * 31 | 0) % 12), oy2 - 2 + bob, 1, 1); }
+    if (dist(Player.x, Player.y, ox + 8, oy + 8) < 30) drawText(c, MAT_NAMES[o.mat], ox + 8, oy2 - 12, 6, '#f8e858', '#241a33', 'center');
   };
 
   // ---- SCATTER: place each material in a thematic, exploration-gated spot ----

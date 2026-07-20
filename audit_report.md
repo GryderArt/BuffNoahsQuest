@@ -2,7 +2,7 @@
 Stage reachability + puzzle solvers + WALK-AROUND detection + intent gates + softlocks.
 
 ## canyon  (Whistling Canyon) — stage: w1 [lenient]
-- items: 16 ok, 0 backtrack-only, 0 NEVER
+- items: 17 ok, 0 backtrack-only, 0 NEVER
 
 ---
 # FINDINGS
