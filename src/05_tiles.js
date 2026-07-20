@@ -50,6 +50,11 @@ const TILEDEFS = {
   rootwall: { solid: true },                    // braided-root wall
   glowvein: {},                                 // faint vein path (brightens in Ramsi's Glow)
   crystal:  { solid: true },                    // crystal wall
+  // --- the CRYSTAL CROWN (Whistling Canyon summit tower — pastel prismatic, 06c) ---
+  prism:      { solid: true, anim: true },      // tower wall: pastel faceted crystal
+  prismfloor: {},                               // polished crystal balcony floor
+  prismglow:  { anim: true },                   // glowing accent floor tile
+  prismshard: { solid: true },                  // pastel shard cluster (decor)
   softblock:{ solid: true, soft: true },        // Roll-Charge smashes it
   holegap:  { solid: true, hole2: true },       // burrow-hole: blocks Noah; shrunk-Ramsi only
   bouncecap:{},                                 // mushroom bounce-pad marker
@@ -561,6 +566,42 @@ function paintTileBase(x, id, vseed, frame) {
       x.beginPath(); x.moveTo(3, 0); x.bezierCurveTo(8, 5, 4, 10, 9, 16); x.stroke(); x.lineWidth = 1;
       const gc = frame ? '#bfffe0' : '#7fe6b8';
       px(3, 2, gc); px(6, 7, gc); px(9, 13, gc);
+      break; }
+    // --- CRYSTAL CROWN tiles: the pastel prismatic tower material (ice-blue / lavender /
+    // pink facets, white shine, gold glints) matching the crystal-spire key art ---
+    case 'prism': {
+      fill('#b8a8e8');
+      x.fillStyle = '#241a33'; x.fillRect(0, 0, 1, 16); x.fillRect(15, 0, 1, 16);
+      // tall facets: alternating pastel panes
+      const cols = ['#cabcf4', '#9adcf8', '#e8d8f8', '#aecdf4'];
+      for (let f = 0; f < 4; f++) { x.fillStyle = cols[(f + vseed) % 4]; x.beginPath(); x.moveTo(1 + f * 3.6, 16); x.lineTo(2.6 + f * 3.6, 0); x.lineTo(4.6 + f * 3.6, 0); x.lineTo(4.4 + f * 3.6, 16); x.fill(); }
+      x.fillStyle = 'rgba(255,255,255,.85)'; x.fillRect(3 + (vseed % 3) * 4, 0, 1, 16);   // shine seam
+      if (vseed % 3 === 0) { x.fillStyle = '#f8d048'; x.fillRect(7, 12, 2, 2); }          // gold rivet
+      px((vseed * 5 + 3) % 14, (vseed * 7 + 2) % 12, frame ? '#ffffff' : '#e8f4ff');      // twinkle
+      break; }
+    case 'prismfloor': {
+      fill('#e8e2f4');
+      x.fillStyle = '#d6caee';
+      for (let n = 0; n < 3; n++) { const a = 1 + (r() * 11 | 0), b = 1 + (r() * 11 | 0); x.beginPath(); x.moveTo(a + 2, b); x.lineTo(a + 4, b + 2); x.lineTo(a + 2, b + 4); x.lineTo(a, b + 2); x.fill(); }
+      x.fillStyle = 'rgba(255,255,255,.7)'; x.fillRect(0, 0, 16, 1);
+      speck(3, '#c8b8ff', '#ffffff');
+      break; }
+    case 'prismglow': {
+      const gg = x.createRadialGradient(8, 8, 1, 8, 8, 10);
+      gg.addColorStop(0, frame ? '#ffffff' : '#eaf6ff'); gg.addColorStop(1, '#cabcf4');
+      x.fillStyle = gg; x.fillRect(0, 0, 16, 16);
+      const RB = ['#f8a0a0', '#f8d048', '#9adcf8', '#c8b8ff'];
+      for (let s = 0; s < 4; s++) { x.fillStyle = RB[(s + (frame ? 1 : 0)) % 4]; x.fillRect(2 + s * 3, 13, 2, 1); }
+      px(4 + (vseed % 8), 3, frame ? '#fff' : '#c8e8ff');
+      break; }
+    case 'prismshard': {
+      fill('#e8e2f4');                                   // sits on the balcony floor
+      x.fillStyle = '#241a33'; x.beginPath(); x.moveTo(8, 0); x.lineTo(14, 8); x.lineTo(11, 16); x.lineTo(4, 16); x.lineTo(2, 7); x.fill();
+      x.fillStyle = vseed % 2 ? '#d8ccf6' : '#cabcf4'; x.beginPath(); x.moveTo(8, 1); x.lineTo(13, 8); x.lineTo(10, 15); x.lineTo(5, 15); x.lineTo(3, 7); x.fill();
+      x.fillStyle = '#9adcf8'; x.beginPath(); x.moveTo(8, 1); x.lineTo(13, 8); x.lineTo(8, 9); x.fill();
+      x.fillStyle = '#ffffff'; x.fillRect(7, 2, 1, 6);
+      x.fillStyle = '#f8c8e8'; x.fillRect(5, 10, 2, 2);
+      px(10, 10, frame ? '#ffffff' : '#e8d8ff');
       break; }
     case 'crystal': {
       fill('#2a2050');

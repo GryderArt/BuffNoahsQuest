@@ -329,9 +329,12 @@ SHEETS['newart12'] = {'cols': 3, 'rows': 2, 'dens': 4, 'keys': [
   'creature.lanterna.a', 'creature.glowfish.a', 'creature.stormcrow.a',
   'item.goldnugget', 'item.crystalshard', 'item.voidgem']}
 # Sheet 18: the OPENING CUTSCENE poses (props so installExtSprite files them under Sprites.props)
+# NOTE: the R2C3 spire cell is deliberately SKIPPED ('-') — its floating-crystal-island look
+# didn't match the unified world map (red rock + crystal crown); the intro draws its own
+# matching spire, and the Crystal Crown level art carries the aesthetic in-game.
 SHEETS['introart'] = {'cols': 3, 'rows': 2, 'dens': 4, 'keys': [
   'prop.introhug', 'prop.introsahorfly', 'prop.introcage',
-  'prop.intronoahbrave', 'prop.intronoahdash', 'prop.introspire']}
+  'prop.intronoahbrave', 'prop.intronoahdash', '-']}
 ASSET_SIZES.update({
   'prop.introhug': [24, 20], 'prop.introsahorfly': [26, 22], 'prop.introcage': [16, 14],
   'prop.intronoahbrave': [16, 20], 'prop.intronoahdash': [18, 20], 'prop.introspire': [22, 30],

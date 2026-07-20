@@ -830,6 +830,11 @@ falls back to the old procedural strata until the art is present).
 
 ## SHEET 18 — `sheet.introart.png` — THE OPENING CUTSCENE poses (3 cols x 2 rows)
 
+> STATUS: IMPORTED (2026-07-20) — 5 of 6 cells live (hug/sahorfly/cage/brave/dash + both
+> scenes). The R2C3 spire cell is intentionally SKIPPED: it mismatched the unified world
+> map; the intro draws the red-rock+crystal spire itself, and the CRYSTAL CROWN level art
+> (06c) carries the aesthetic in-game.
+
 Save as: **`assets/raw/sheet.introart.png`** — then `python3 import_art.py && python3 build.py`.
 The new SPACE-paced opening plays with sprite-composed stand-ins until this sheet exists;
 every cell below replaces its stand-in automatically.
@@ -896,3 +901,63 @@ the dark. Dramatic, but storybook-dramatic — never horror.
 > assets/scene.intro_vale.png + assets/scene.intro_storm.png at 960x544 — no manual
 > sizer needed. The opening's draw code checks Sprites.props.intro* and
 > Sprites.scenes.intro_* first and falls back to sprite-composed stand-ins until then.
+
+---
+
+## SCENE 19 — `worldmap_bg.png` — THE UNIFIED WORLD MAP remake (image-reference workflow)
+
+> STATUS: DELIVERED (2026-07-20) — the repaint is live; node pads matched the old positions
+> so worldmap_nodes.js needed no changes.
+
+Save as: **`worldmap_bg.png`** in the game folder itself (NEXT to BuffNoahsQuest_v4.html —
+this one is a side file, no import step; the game loads it by name at runtime). Keep the
+size ~1665x945 (or any same-aspect larger; it scales). Node dots/labels/trails draw ON TOP,
+and node positions can be re-tuned afterward with map_editor.html, so close is good enough.
+
+WORKFLOW: attach TWO images to ChatGPT before pasting the prompt —
+  1. the CURRENT worldmap_bg.png  (composition + palette reference)
+  2. the crystal Rainbow Spire art from sheet.introart  (style reference for the spire)
+
+```
+I am attaching (1) the current painted world map of my kid-friendly pixel-art game and
+(2) a crystal spire artwork. REPAINT the world map as one unified storybook painting:
+KEEP the first image's composition, camera angle, palette and the positions of every
+existing landmark EXACTLY — same island, same regions, same reading — but repaint it
+cohesively and ADD the missing late-game landmarks listed below. Style: warm painted
+storybook gouache with a chunky pixel-art feel, plum-black #241a33 line accents, NO text,
+NO labels, NO UI, no characters. It must still read clearly when shrunk to 480x272.
+
+THE ONE BIG CHANGE — THE RAINBOW SPIRE (upper-center-left, the red-rock tower with the
+rainbow in image 1): the Arizona-style stacked red-rock mesa STAYS, but its peak has
+CRACKED OPEN and the crystal spire from image 2 now GROWS out of the top of the stone —
+pastel prismatic crystal bursting from the red rock, the rainbow arcing through its tip,
+a few sparkles. Blend the two materials at the crack (rubble + glinting crystal shards
+on the ledges below). It should feel like the desert kept a magical secret.
+
+ADD these landmarks, matching the painting's style (small, charming, readable):
+- GREENWOOD VALE (lower-left green region): keep the meadow; add a tiny thatched cottage
+  with a crooked chimney, a big oak, and a dark BURROW SINKHOLE nearby — a round hole
+  ringed by giant roots that dive into the earth (the way down to the Underburrow).
+- A slender white WING-SPIRE in the vale with tiny clouds spiraling up it (the Skyward
+  Ascent tower).
+- SUNSPLASH COAST (lower-right sand): keep the beach; add a small driftwood schoolhouse
+  with a coral-pink roof and a little glass AQUARIUM DOME glinting by the water.
+- STARFALL WASTES (upper-right purple desert): keep it; add a few fallen glowing stars
+  and one tiny crashed saucer.
+- COGWERK CITY: on the right-hand edge beyond the wastes, a compact BRASS CLOCKWORK
+  SKYLINE — clocktower with a glowing dial, gears, thin chimneys with steam puffs,
+  connected to the island by a thin brass rail bridge.
+- THE SKY REALMS: high in the sky above the island, a short CHAIN OF SMALL FLOATING
+  ISLANDS wrapped in a soft storm-cloud ring with one gentle lightning spark.
+- GRIMSPIRE KEEP: on the far horizon behind everything, a dark storm-wrapped gothic
+  castle silhouette under bruised purple thunderheads — far away, moody, storybook-scary
+  at most.
+- Between regions, faint DOTTED TRAIL lines like a treasure map (the roads).
+Keep the water/border framing from image 1. Light from the upper left. No region may
+get so busy that a small glowing node dot on it would be hard to see.
+```
+
+> After dropping the new worldmap_bg.png in the folder: nothing to import — just refresh
+> the game. Then ask Claude (or use map_editor.html) to re-check the four node dots
+> (vale/coast/wastes/canyon) still sit on their landmarks and nudge worldmap_nodes.js
+> if the repaint shifted anything. Remember to copy the new PNG into the GitHub repo too.

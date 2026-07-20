@@ -455,14 +455,14 @@ H.assert(Game.flags.bosskeys === 0, 'den boss door unlocked');
 console.log('== ZONE 4: WHISTLING CANYON ==');
 Game.loadMap('canyon');
 // stairs e0->e1, ice wall e1->e2 (gloves), post e2->e3 (harpoon)
-H.place(8, 28); H.hold('ArrowUp', true); H.step(30); H.hold('ArrowUp', false);
+H.place(8, 40); H.hold('ArrowUp', true); H.step(30); H.hold('ArrowUp', false);
 H.assert(Player.elev === 1, 'stairs to tier 1');
-H.place(36, 21); H.hold('ArrowUp', true); H.step(60); H.hold('ArrowUp', false);
+H.place(36, 33); H.hold('ArrowUp', true); H.step(60); H.hold('ArrowUp', false);
 H.assert(Player.elev === 2, 'gloves up the slick frost wall to tier 2');
-H.place(24, 12); H.face('up'); Player.tool = 'harpoon'; Player.useTool(); H.step(70);
+H.place(24, 24); H.face('up'); Player.tool = 'harpoon'; Player.useTool(); H.step(70);
 H.assert(Player.elev === 3, 'harpooned the summit post to tier 3');
 // dragon: bone-stun then net (Cora's mastery trade)
-Game.loadMap('canyon'); H.place(20, 15);
+Game.loadMap('canyon'); H.place(20, 27);
 captureWith('dragon', 'bone-then-net');
 Game.openTrade('cora');
 H.assert(Game.menu.items[0].special, 'Cora offers the wings trade');
@@ -471,24 +471,24 @@ H.assert(Game.flags.wings, 'ANGEL WINGS earned via dragon trade');
 clearUI();
 // FLY across the wide rift to the berry garden
 {
-  H.place(20, 8); H.face('up');
-  H.assert(!Player.canEnter(NQ.MAPS.canyon, 20, 5, 20, 8), 'rift blocks walking');
+  H.place(20, 20); H.face('up');
+  H.assert(!Player.canEnter(NQ.MAPS.canyon, 20, 17, 20, 20), 'rift blocks walking');
   Player.airborne = true; Player.flight = false;
-  H.assert(!Player.canEnter(NQ.MAPS.canyon, 20, 5, 20, 8), 'rift blocks plain jumping too');
+  H.assert(!Player.canEnter(NQ.MAPS.canyon, 20, 17, 20, 20), 'rift blocks plain jumping too');
   Player.airborne = false;
   Player.jump(); Player.jump(); // jump + first flap = flight
   H.hold('ArrowUp', true);
-  for (let i = 0; i < 14 && Player.y > 3.6 * T; i++) { H.step(10); Player.jump(); }
+  for (let i = 0; i < 14 && Player.y > 15.6 * T; i++) { H.step(10); Player.jump(); }
   H.hold('ArrowUp', false);
   H.step(30);
-  H.assert(Player.y / T < 4.2, 'FLEW across the rift (y=' + (Player.y / T).toFixed(1) + ')');
+  H.assert(Player.y / T < 16.2, 'FLEW across the rift (y=' + (Player.y / T).toFixed(1) + ')');
 }
-H.place(20, 3); H.face('up'); Game.interact();
+H.place(20, 15); H.face('up'); Game.interact();
 H.assert(Game.flags.baits.berry >= 1, 'RAINBOW BERRY picked at the summit garden');
 clearUI();
 
 console.log('== FINALE: RAINBOW SPIRE ==');
-H.place(40, 6); H.hold('ArrowUp', true); H.step(50); H.hold('ArrowUp', false);
+H.place(40, 18); H.hold('ArrowUp', true); H.step(50); H.hold('ArrowUp', false);
 H.assert(Game.mapId === 'spire', 'entered the Rainbow Spire');
 H.place(15, 14); H.step(20);
 {

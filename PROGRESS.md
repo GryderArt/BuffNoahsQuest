@@ -2408,3 +2408,29 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
 - Tests: harness startPlay now skips the opening with X; pixels.js beats updated (asserts
   SPACE advances ONE beat and X skips). pixels smoke validate features playthrough
   underburrow all green. Screenshots: shots/intro_beat0..6.png.
+
+## v10.28 (2026-07-20) — the UNIFIED WORLD MAP, the CRYSTAL CROWN, and the painted opening
+- NEW WORLD MAP is in (worldmap_bg.png, repainted via SCENE 19's image-reference prompt):
+  one cohesive island — snowy peak, vale + cottage + sheep, the red-rock Rainbow Spire mesa
+  with its rainbow, purple Starfall Wastes (with the saucer!), Sunsplash Coast + pier, baked
+  dotted trails. The four node pads land within ~2px of the live node dots — no re-tuning
+  needed (verified with an in-game worldmap screenshot).
+- THE CRYSTAL CROWN (new src/06c_crystalcrown.js + four 'prism*' tiles in 05_tiles): since
+  the repaint kept the mesa red-rock, the LEVEL now carries the crystal-tower look — the
+  canyon map grew 12 rows taller (buildMaps wrapper shifts tiles/elev/objects/links/spawns/
+  doors/start +12 and fixes the spire->canyon return link), and a pastel prismatic tower
+  (tip/upper/middle/base storeys) blooms out of the old Rainbow-Spire door block. Floating
+  prismfloor balconies + a TIP PERCH in the rift sky (wings, like the berry garden), shard
+  clusters, glow tiles, a 10-gem chest, a sign, and an animated in-world RAINBOW over the tip
+  (Game.OBJDRAW.crownrainbow, elevation-lifted, with m.topPad so the camera can see it).
+  Engine lesson learned: OBJDRAW draws in WORLD coords and must subtract the e (elev*EOFF)
+  arg; elev-3 regions render lifted 42px, so sky rows need topPad + somewhere high to stand.
+- SHEET 18 INTRO ART imported: introhug/introsahorfly/introcage/intronoahbrave/intronoahdash
+  + both painted backdrops (import_art's new SCENES path). The R2C3 floating-island spire
+  cell is deliberately SKIPPED ('-' in SHEETS) — mismatch with the unified map; instead the
+  intro's drawn spire is now the world-map look (stacked red-rock mesa + crystal crown +
+  rainbow), repositioned in the chase beat to the open horizon clear of the painted cottage.
+- Tests: canyon coords in playthrough/pixels shifted +12; validate (739/58) smoke playthrough
+  pixels features features2 underburrow _icefield _starcut _cogwerk all green; AUDIT canyon:
+  0 errors 0 warnings. Shots: crown_tip/crown_balcony/crown_from_door, worldmap_new,
+  intro_beat0..6.

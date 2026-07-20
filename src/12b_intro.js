@@ -171,18 +171,32 @@
     pspr(c, Sprites.sahor, x, y, s);
     if (withCage) caged(c, x - 2, y + 26 * s + Math.sin(t * 5) * 2, s * 0.75, t);
   }
-  function spireFar(c, x, y, s, t) {                     // the Rainbow Spire landmark (art or drawn)
-    const P = Sprites.props || {};
-    if (P.introspire) { pspr(c, P.introspire, x, y, s); return; }
-    c.fillStyle = '#241a33'; c.beginPath(); c.ellipse(x, y + 26 * s, 20 * s, 6 * s, 0, 0, 7); c.fill();
-    c.fillStyle = '#9adcf8'; c.beginPath(); c.moveTo(x - 10 * s, y + 24 * s); c.lineTo(x, y - 30 * s); c.lineTo(x + 10 * s, y + 24 * s); c.fill();
-    c.strokeStyle = '#241a33'; c.beginPath(); c.moveTo(x - 10 * s, y + 24 * s); c.lineTo(x, y - 30 * s); c.lineTo(x + 10 * s, y + 24 * s); c.closePath(); c.stroke();
-    c.strokeStyle = 'rgba(255,255,255,.7)'; c.beginPath(); c.moveTo(x - 3 * s, y + 18 * s); c.lineTo(x, y - 22 * s); c.stroke();
+  function spireFar(c, x, y, s, t) {                     // the RAINBOW SPIRE, world-map style:
+    // stacked Arizona red-rock mesa with the crystal crown blooming from its peak.
+    // (The Sheet-18 floating-island spire cell is intentionally unused — mismatch.)
+    const tiers = [[20, 8], [15, 8], [10, 8]];           // half-width, height per rock tier
+    let ty = y + 24 * s;
+    c.strokeStyle = '#241a33';
+    for (const [hw, hh] of tiers) {
+      ty -= hh * s;
+      c.fillStyle = '#b06a3c'; c.fillRect(x - hw * s, ty, hw * 2 * s, hh * s);
+      c.fillStyle = '#d89860'; c.fillRect(x - hw * s, ty, hw * 2 * s, 2 * s);        // sunlit lip
+      c.fillStyle = '#834c28'; c.fillRect(x - hw * s, ty + (hh - 2) * s, hw * 2 * s, 2 * s);
+      c.strokeRect(x - hw * s + 0.5, ty + 0.5, hw * 2 * s - 1, hh * s - 1);
+    }
+    // the crystal crown growing out of the cracked peak
+    c.fillStyle = '#241a33'; c.beginPath(); c.moveTo(x - 7 * s, ty); c.lineTo(x, ty - 22 * s); c.lineTo(x + 7 * s, ty); c.fill();
+    c.fillStyle = '#cabcf4'; c.beginPath(); c.moveTo(x - 5.5 * s, ty); c.lineTo(x, ty - 20 * s); c.lineTo(x + 5.5 * s, ty); c.fill();
+    c.fillStyle = '#9adcf8'; c.beginPath(); c.moveTo(x, ty - 20 * s); c.lineTo(x + 5.5 * s, ty); c.lineTo(x, ty); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.85)'; c.fillRect(x - 1 * s, ty - 17 * s, s, 14 * s);
+    for (const [rx2, ry2] of [[-8, -1], [7, -2], [-4, 2]]) {                          // rubble shards at the crack
+      c.fillStyle = '#e8d8f8'; c.fillRect(x + rx2 * s, ty + ry2 * s, 2 * s, 2 * s);
+    }
     const RB = ['#e84a4a', '#f89238', '#f8d048', '#58c452', '#4878e8', '#9a62e0'];
-    for (let k = 0; k < RB.length; k++) { c.strokeStyle = RB[k]; c.globalAlpha = 0.85; c.beginPath(); c.arc(x, y - 26 * s, (16 + k * 2.4) * s, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); }
+    for (let k = 0; k < RB.length; k++) { c.strokeStyle = RB[k]; c.globalAlpha = 0.85; c.beginPath(); c.arc(x, ty - 16 * s, (14 + k * 2.2) * s, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); }
     c.globalAlpha = 1;
     const tw = (t * 3 | 0) % 3;
-    c.fillStyle = '#fff'; c.fillRect(x - 6 * s + tw * 4 * s, y - (10 + tw * 8) * s, 2, 2);
+    c.fillStyle = '#fff'; c.fillRect(x - 4 * s + tw * 4 * s, ty - (8 + tw * 5) * s, 2, 2);
   }
 
   // ---------- the seven beats ----------
@@ -258,9 +272,9 @@
     const lift = clamp(t / 3, 0, 0.4);
     bgMeadow(c, t, 1 - lift);
     windLeaves(c, t + 4);
-    spireFar(c, SW - 66, 70, 1.15, t);
+    spireFar(c, SW * 0.58, 74, 0.95, t);      // on the open horizon (clear of the painted cottage)
     const q = clamp(t / 3.2, 0, 1);
-    sahorFly(c, lerp(SW * 0.4, SW - 78, q), lerp(60, 84, q), lerp(1.3, 0.55, q), t, true, true);
+    sahorFly(c, lerp(SW * 0.3, SW * 0.60, q), lerp(56, 66, q), lerp(1.3, 0.5, q), t, true, true);
     const P = Sprites.props || {}, gy = SH * 0.63;
     const nx = SW * 0.22 + Math.min(60, t * 26);
     if (P.intronoahdash) pspr(c, P.intronoahdash, nx, gy + 18, 2.4);

@@ -88,8 +88,8 @@ H.warp('wastes', 6, 20); assertPlayerVisible('wastes'); H.shot('11_wastes');
 // 12. keep boss
 H.warp('keep2', 15, 8); H.step(20); H.render(); H.shot('12_keep');
 // 13. canyon tiers
-H.warp('canyon', 6, 34); assertPlayerVisible('canyon'); H.shot('13_canyon');
-H.place(24, 14); H.render(); H.shot('14_canyon_top');
+H.warp('canyon', 6, 46); assertPlayerVisible('canyon'); H.shot('13_canyon');
+H.place(24, 26); H.render(); H.shot('14_canyon_top');
 // 14. spire + sahor
 H.warp('spire', 15, 27); H.render(); H.shot('15_spire');
 H.place(15, 14); H.step(30); H.render(); H.shot('16_sahor');
