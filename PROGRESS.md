@@ -2434,3 +2434,24 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   pixels features features2 underburrow _icefield _starcut _cogwerk all green; AUDIT canyon:
   0 errors 0 warnings. Shots: crown_tip/crown_balcony/crown_from_door, worldmap_new,
   intro_beat0..6.
+
+## v10.29 (2026-07-20) — the LEVEL EDITOR grows up: every level, every tile, elevation, live edits
+- level_editor.html no longer carries a stale copied tile renderer — it loads game.js itself
+  (new `window.NQ_EDITOR` guard skips the game boot; NQ exports gained TileArt/paintTileBase).
+  The editor is wrapped in an IIFE so its names don't collide with the game's globals.
+  Result: ALL 79 tiles (prism* included, and any future tile automatically), real game tile
+  art in the palette and on the canvas (imported HD tiles refresh in once decoded), and a
+  LEVEL dropdown that opens ANY of the 58 maps — tiles, elevation, objects, doors, links and
+  herds all visible (objects are reference-only for game maps).
+- ELEVATION painting: E0–E4 buttons (or keys 0–4) paint height with the same pencil/rect/
+  fill tools; overlay shows brightness by height + dark rims at drops + digits in height
+  mode; undo/resize/json save-load all carry elev; exported builder code now emits E() runs.
+- NEW "Save level edit" pipeline: exports `<mapid>.edit.json` (tiles+elev only) → drop into
+  customlevels/ → build.py embeds it into MAP_EDITS (02c placeholder) → new
+  src/17b_mapedits.js applies it AFTER the whole buildMaps wrapper chain. Objects/doors/
+  links/spawns/start stay as coded; delete the file + rebuild to revert. The editor's export
+  panel walks through the 3 steps and reminds about validate + audit.
+- Verified: headless-Chromium editor test (79 tiles incl. prism*, 58 maps, canyon opens
+  48x52 with elev + 22 objects) + screenshot; full ROUND-TRIP test (canyon.edit.json →
+  build embeds → harness sees the repaint → validate smoke playthrough + audit canyon all
+  green → test edit removed, clean rebuild verified). BOOTSTRAP.md documents the flow.

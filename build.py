@@ -49,6 +49,25 @@ if os.path.isdir(ASSETS):
         js = js.replace('let EXT_ART = {};', 'let EXT_ART = ' + json.dumps(art) + ';')
         print('embedded %d external art assets' % len(art))
 
+# ---- embed level-editor map edits from customlevels/*.edit.json ----
+CUSTOM = os.path.join(HERE, 'customlevels')
+if os.path.isdir(CUSTOM):
+    import json as _json
+    edits = {}
+    for f in sorted(os.listdir(CUSTOM)):
+        if not f.endswith('.edit.json'): continue
+        try:
+            d = _json.load(open(os.path.join(CUSTOM, f), encoding='utf-8'))
+            mid = d.get('id')
+            if not mid or 'tiles' not in d:
+                print('!! SKIP %s (needs {id, tiles})' % f); continue
+            edits[mid] = d
+        except Exception as e:
+            print('!! SKIP %s (bad json: %s)' % (f, e))
+    if edits:
+        js = js.replace('let MAP_EDITS = {};', 'let MAP_EDITS = ' + _json.dumps(edits) + ';')
+        print('embedded %d map edit(s): %s' % (len(edits), ', '.join(sorted(edits))))
+
 stamp = time.strftime('%Y-%m-%d %H:%M')
 h = hashlib.sha1(js.encode()).hexdigest()[:8]
 js = js.replace('__BUILD_STAMP__', f'v4.3 {stamp} [{h}]')

@@ -111,6 +111,12 @@ assets/raw/<art>.png  --(python3 import_art.py)-->  assets/<key>.png  --(python3
   `scene.world3bg` (the overview map), `scene.lady`, `scene.trader`.
 - **`.big.png` override:** drop `assets/raw/<key>.big.png` and the importer's second pass converts it
   *after* the normal pass, so it wins every import (good for hand-made art that must survive re-imports).
+- **Map repaints via the LEVEL EDITOR:** level_editor.html now loads game.js itself (window.NQ_EDITOR
+  guard skips the boot) — every map + every tile + elevation painting, always in sync. "Open level" →
+  repaint tiles/height → "Save level edit" downloads `<mapid>.edit.json` → drop in customlevels/ →
+  `python3 build.py` embeds it (MAP_EDITS in 02c, applied by 17b_mapedits after the buildMaps chain;
+  tiles+elev only — objects/doors/links/spawns stay coded). Delete the .edit.json + rebuild to revert.
+  Run validate + audit after map edits.
 - **Editing a PNG does NOT auto-update the game** (everything is embedded at build time):
   - cleaned a processed `assets/<key>.png` → `python3 build.py` (your exact pixels embed verbatim; just
     don't re-run import_art for that key or it regenerates/overwrites from raw).

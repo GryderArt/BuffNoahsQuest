@@ -926,5 +926,5 @@ G.NQ = { Game, Player, MAPS, TILEDEFS, CREATURES, Bosses, Audio2, UI,
   tileAt, elevAt, drawWorld, Sprites, Particles, WORLD_NODES, WORLD3_NODES, applyMapOverride, segPoints,
   press: (k) => { onKeyDown({ key: k }); onKeyUp({ key: k }); },
   hold: (k, v) => { if (v) onKeyDown({ key: k }); else onKeyUp({ key: k }); },
-  keyHeld, dist };
-if (!IS_NODE) setTimeout(bootGame, 0);   // defer to next tick so ALL files (incl. entrance hooks in 15/17) have loaded
+  keyHeld, dist, TileArt, paintTileBase };
+if (!IS_NODE && !G.NQ_EDITOR) setTimeout(bootGame, 0);   // defer to next tick so ALL files have loaded (NQ_EDITOR: level_editor loads game.js for data/art without booting the game)

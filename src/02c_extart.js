@@ -6,3 +6,4 @@
 // boss.billy / prop.chest / item.heart / gear.sandal / tool.net /
 // tree.tree|pine|palm.   Empty object = all-procedural art (the default).
 let EXT_ART = {};
+let MAP_EDITS = {};   // filled by build.py from customlevels/*.edit.json (level-editor tile/elev overrides)
