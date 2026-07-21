@@ -2,7 +2,8 @@
 // ================= TOUCH CONTROLS — phones & tablets =================
 // Auto-detects touch devices and switches the game to finger-friendly inputs
 // (override with ?touch=1 / ?touch=0 in the URL):
-//   * a semi-transparent twin-circle JOYSTICK (lower left) drives the arrow keys
+//   * a semi-transparent 4-arrow D-PAD (lower left, DualSense-style rounded "pick"
+//     keys) drives the arrow keys — 8-way: thumb between two arrows = a diagonal
 //   * the QUEST box becomes big Z / X / C buttons + a SPACE BAR (11_ui calls
 //     UI.drawTouchPad for that spot); the side-scroller + sky minigames have no
 //     panel, so they get floating buttons bottom-right instead
@@ -30,7 +31,7 @@
   G.NQ_TOUCH = detectTouch();
 
   // ---------- geometry (virtual-screen coords) ----------
-  const JOY = { x: 56, y: SH - 50, R: 32, KNOB: 13, GRAB: 60 };    // circle-in-circle, lower left
+  const PAD = { x: 56, y: SH - 50, off: 19, w: 26, h: 24, grab: 50, dead: 9 };   // 4-arrow pad, lower left
   const MENU_BTN = { x: SW - 26, y: 4, w: 22, h: 17 };             // the "..." button, top right
   const DIRS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
   const MOVE_STATES = ['play', 'side', 'ascent', 'aviary'];   // dialogs hide the stick (SPACE advances)
@@ -38,7 +39,7 @@
   const BTN_DEFS = [{ k: 'z', cap: 'TOOL' }, { k: 'x', cap: 'JUMP' }, { k: 'c', cap: 'RAMSI' }];
 
   const T = {                       // live touch state (exposed for the browser test harness)
-    joyId: null, jx: 0, jy: 0,      // active joystick touch + knob offset (clamped for drawing)
+    padId: null,                    // the touch currently steering the D-pad
     btns: [],                       // [{x,y,w,h,k}] on-screen buttons, rebuilt every frame
     btnTouch: {},                   // touch id -> key it is holding down
     menuOpen: false, menuRects: [],
@@ -69,18 +70,17 @@
     } catch (e) {}
   }
 
-  // ---------- joystick ----------
-  function joyActive() { return MOVE_STATES.includes(Game.state); }
-  function joySet(px, py) {
-    const dx = px - JOY.x, dy = py - JOY.y, len = Math.hypot(dx, dy) || 1;
-    const cl = Math.min(len, JOY.R - 4);
-    T.jx = dx / len * cl; T.jy = dy / len * cl;
-    const dead = JOY.R * 0.30;
-    setHeld('ArrowLeft', dx < -dead); setHeld('ArrowRight', dx > dead);
-    setHeld('ArrowUp', dy < -dead); setHeld('ArrowDown', dy > dead);
+  // ---------- the D-pad ----------
+  function padActive() { return MOVE_STATES.includes(Game.state); }
+  function padSet(px, py) {
+    const dx = px - PAD.x, dy = py - PAD.y, len = Math.hypot(dx, dy);
+    const S = 0.3827;                        // sin 22.5° — 8-way sectors, like a real D-pad
+    const on = len > PAD.dead;               // the centre gap is neutral
+    setHeld('ArrowLeft', on && dx / len < -S); setHeld('ArrowRight', on && dx / len > S);
+    setHeld('ArrowUp', on && dy / len < -S); setHeld('ArrowDown', on && dy / len > S);
   }
-  function joyClear() {
-    T.joyId = null; T.jx = T.jy = 0;
+  function padClear() {
+    T.padId = null;
     for (const k of DIRS) setHeld(k, false);
   }
 
@@ -105,14 +105,14 @@
       return;
     }
     for (const b of T.btns) if (inRect(p, b)) { T.btnTouch[id] = b.k; setHeld(b.k, true); return; }
-    if (T.joyId === null && joyActive() && Math.hypot(p.x - JOY.x, p.y - JOY.y) <= JOY.GRAB) {
-      T.joyId = id; joySet(p.x, p.y); return;
+    if (T.padId === null && padActive() && Math.hypot(p.x - PAD.x, p.y - PAD.y) <= PAD.grab) {
+      T.padId = id; padSet(p.x, p.y); return;
     }
     CLICK_QUEUE.push({ x: p.x, y: p.y });                 // plain tap = a click
   }
-  function touchMove(id, p) { if (id === T.joyId) joySet(p.x, p.y); }
+  function touchMove(id, p) { if (id === T.padId) padSet(p.x, p.y); }
   function touchUp(id) {
-    if (id === T.joyId) { joyClear(); return; }
+    if (id === T.padId) { padClear(); return; }
     const k = T.btnTouch[id];
     if (k !== undefined) { setHeld(k, false); delete T.btnTouch[id]; }
   }
@@ -157,12 +157,12 @@
     if (cap) drawText(c, cap, r.x + r.w / 2, r.y + r.h - 11, 6, on ? '#d8e8ff' : '#a89cc0', null, 'center');
   }
 
-  // ---------- overlay: joystick + "..." + menu + floating pad, drawn over everything ----------
+  // ---------- overlay: D-pad + "..." + menu + floating pad, drawn over everything ----------
   const _render = render;
   render = function (dtForUi) {
     if (G.NQ_TOUCH) {
       T.btns.length = 0;                                   // rebuilt by drawTouchPad / the float pad
-      if (T.joyId !== null && !joyActive()) joyClear();    // state changed mid-drag
+      if (T.padId !== null && !padActive()) padClear();    // state changed mid-press
     }
     _render(dtForUi);
     if (G.NQ_TOUCH) { try { drawTouchOverlay(ctx); } catch (e) {} }
@@ -174,7 +174,7 @@
     c.imageSmoothingEnabled = false;
     const st = Game.state;
     if (FLOAT_STATES.includes(st)) drawFloatPad(c);
-    if (joyActive()) drawJoy(c);
+    if (padActive()) drawPad(c);
     drawMenuBtn(c);
     if (T.menuOpen) drawMenu(c);
     if ((G.innerHeight || 0) > (G.innerWidth || 1) * 1.05) {   // portrait phone: nudge, don't block
@@ -183,17 +183,42 @@
     }
     c.restore();
   }
-  function drawJoy(c) {
-    c.globalAlpha = 0.30;
-    c.fillStyle = '#100c1e'; c.beginPath(); c.arc(JOY.x, JOY.y, JOY.R, 0, 7); c.fill();
-    c.globalAlpha = 0.55; c.lineWidth = 2; c.strokeStyle = '#ffffff';
-    c.beginPath(); c.arc(JOY.x, JOY.y, JOY.R, 0, 7); c.stroke();
-    c.lineWidth = 1;
-    c.fillStyle = '#ffffff';                                // N/S/E/W ticks
-    c.fillRect(JOY.x - 1, JOY.y - JOY.R + 3, 2, 4); c.fillRect(JOY.x - 1, JOY.y + JOY.R - 7, 2, 4);
-    c.fillRect(JOY.x - JOY.R + 3, JOY.y - 1, 4, 2); c.fillRect(JOY.x + JOY.R - 7, JOY.y - 1, 4, 2);
-    c.globalAlpha = T.joyId !== null ? 0.85 : 0.5;
-    c.fillStyle = '#ffffff'; c.beginPath(); c.arc(JOY.x + T.jx, JOY.y + T.jy, JOY.KNOB, 0, 7); c.fill();
+  // four rounded "pick" keys (broad edge out, soft point toward the centre gap)
+  const PETALS = [
+    { k: 'ArrowUp', ox: 0, oy: -1, rot: 0 },
+    { k: 'ArrowRight', ox: 1, oy: 0, rot: Math.PI / 2 },
+    { k: 'ArrowDown', ox: 0, oy: 1, rot: Math.PI },
+    { k: 'ArrowLeft', ox: -1, oy: 0, rot: -Math.PI / 2 },
+  ];
+  function pickPath(c, pts, rr) {                 // polygon with per-corner rounding
+    const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const m0 = mid(pts[pts.length - 1], pts[0]);
+    c.beginPath(); c.moveTo(m0[0], m0[1]);
+    for (let i = 0; i < pts.length; i++) {
+      const q = pts[i], m1 = mid(q, pts[(i + 1) % pts.length]);
+      c.arcTo(q[0], q[1], m1[0], m1[1], rr[i]);
+      c.lineTo(m1[0], m1[1]);
+    }
+    c.closePath();
+  }
+  function drawPad(c) {
+    const w = PAD.w, h = PAD.h;
+    for (const p of PETALS) {
+      const on = !!KEYS[p.k];
+      c.save();
+      c.translate(PAD.x + p.ox * PAD.off, PAD.y + p.oy * PAD.off);
+      c.rotate(p.rot);
+      pickPath(c, [[-w / 2, -h / 2], [w / 2, -h / 2], [0, h / 2]], [6, 6, 7]);
+      c.globalAlpha = on ? 0.75 : 0.30;
+      c.fillStyle = on ? '#4878e8' : '#100c1e'; c.fill();
+      c.globalAlpha = on ? 0.95 : 0.55;
+      c.lineWidth = 2; c.strokeStyle = on ? '#f8d048' : '#ffffff'; c.stroke();
+      c.lineWidth = 1;
+      c.globalAlpha = on ? 0.95 : 0.70;           // arrow glyph, pointing outward
+      c.fillStyle = '#ffffff';
+      c.beginPath(); c.moveTo(0, -7); c.lineTo(-4.5, -1); c.lineTo(4.5, -1); c.closePath(); c.fill();
+      c.restore();
+    }
     c.globalAlpha = 1;
   }
   function drawFloatPad(c) {                                // side-scroller/minigames: no panel

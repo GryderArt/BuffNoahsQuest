@@ -2501,3 +2501,14 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
 - New permanent suite test/_chestzip.js: chest-first-then-zip with gloves, gloveless
   slip-shove after loot, normal chests + chestless wires unaffected. validate smoke
   playthrough _crags _materials green.
+
+## v10.33 (2026-07-21) — D-pad replaces the touch joystick (Berkley request)
+- The circle-in-circle joystick felt clumsy — 32b_touch now draws a 4-arrow D-PAD in the
+  same lower-left spot: four rounded DualSense-style "pick" keys (broad edge out, soft
+  point toward the centre gap), semi-transparent, arrow glyphs pointing outward, pressed
+  key lights up blue/gold like the action buttons.
+- Steering is 8-way by angle sector (sin 22.5° thresholds) with a neutral centre gap —
+  thumb between two arrows gives a clean diagonal, sliding between arrows re-aims without
+  lifting. Same touch-id tracking + KEYS/PRESS_QUEUE plumbing as before; no logic changes.
+- Verified: full 21-check playwright run green on the new build (the drag test now rides
+  the pad), screenshots m2/m3 show the pad idle + RIGHT pressed while Noah walks.

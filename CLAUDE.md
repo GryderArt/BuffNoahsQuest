@@ -156,7 +156,8 @@ assets/raw/<art>.png  --(python3 import_art.py)-->  assets/<key>.png  --(python3
   (order matters: files must sort AFTER 15_underburrow to wrap, not be clobbered).
 - **`32b_touch`** TOUCH CONTROLS (phones/tablets; `G.NQ_TOUCH` detection, `?touch=1/0` override).
   Feeds the SAME KEYS/PRESS_QUEUE/CLICK_QUEUE as the keyboard — never add touch-only logic
-  elsewhere. Joystick lower-left (arrow keys, hidden outside play/side/ascent/aviary);
+  elsewhere. 4-arrow D-pad lower-left (rounded DualSense-style picks; 8-way sectors drive
+  the arrow keys, hidden outside play/side/ascent/aviary);
   `UI.drawTouchPad` replaces the QUEST box (11_ui branches on NQ_TOUCH) with Z/X/C + SPACE;
   floating pad bottom-right in panel-less states; "..." menu top-right (pack/outfit/map/
   quest-as-dialog/music/fullscreen). Wraps `render` (overlay) + `bootCanvas` (listeners);
