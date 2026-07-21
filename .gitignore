@@ -4,3 +4,6 @@ audits/
 __pycache__/
 *.lnk
 node_modules/
+
+# secrets — NEVER commit (see CLAUDE.md "GitHub" section)
+GITHUB_TOKEN.md

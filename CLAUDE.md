@@ -46,6 +46,18 @@ Open `BuffNoahsQuest_v4.html` to play. `game.js` is the same code for the Node t
 There is **no bundler/transpiler** — it's hand-rolled concatenation. Files are plain strict-mode JS;
 top-level `function` declarations hoist across files, `const`/`let` are script-scoped at runtime.
 
+### GitHub (publishing) — the token lives in GITHUB_TOKEN.md
+
+- Repo: `GryderArt/BuffNoahsQuest` (public). The playable link is
+  **https://gryderart.github.io/BuffNoahsQuest/** — Pages serves `index.html` from the
+  `gh-pages` branch, so `cp BuffNoahsQuest_v4.html index.html` before a release commit,
+  then push **both** `main` and `main:gh-pages`.
+- Berkley's fine-grained push token is saved in **`GITHUB_TOKEN.md`** (repo root, on his PC
+  and in the cloud copy). That file is **gitignored — NEVER commit it, never `git add -f` it,
+  never put the token in git config/remotes.** Read the push commands from that file.
+- If the token ever stops working (revoked/expired), ask Berkley for a fresh one
+  (Contents: read/write on the repo) and update GITHUB_TOKEN.md — don't guess.
+
 ---
 
 ## 3. ⚠️ How to edit files here (most important lesson)
