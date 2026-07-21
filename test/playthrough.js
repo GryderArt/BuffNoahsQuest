@@ -305,6 +305,10 @@ H.assert(Game.mapId === 'deep', 'dove into the Deep Blue');
 H.assert(Game.map.gateOpen, 'TIDE GATE open at 8 sea friends');
 
 console.log('== BOSS: SIR TWINKLE ==');
+// NEW RULE: Sir Twinkle naps until EVERY sea creature of the Deep is caught
+H.place(46, 19); H.step(20);
+H.assert(Game.boss && !Game.boss.awake, 'Twinkle SNOOZES while sea creatures swim free');
+for (const cr of Game.creatures) cr.state = 'gone';   // the true fisher clears the Deep
 H.place(46, 19); H.step(20);
 {
   const b = Game.boss;

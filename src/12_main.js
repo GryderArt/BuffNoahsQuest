@@ -404,6 +404,20 @@ function updateGame(dt) {
           Game.worldCursor = Math.max(0, WORLD_NODES.findIndex(n => n.id === 'coast'));
           Audio2.playSong('title'); saveGame(); return;
         }
+        // VICTORY EXITS jump straight to the World Map — no long swim/walk home.
+        // (Both links carry a boss req, so these only ever fire after the win.)
+        if (Game.map.id === 'deep' && L.to === 'coast') {
+          Game.toast('Up, up — and OUT to the World Map!');
+          Game.state = 'worldmap';
+          Game.worldCursor = Math.max(0, WORLD_NODES.findIndex(n => n.id === (F.crown ? 'wastes' : 'coast')));
+          Audio2.playSong('title'); saveGame(); return;
+        }
+        if (Game.map.id === 'keep3' && L.to === 'wastes') {
+          Game.toast('Out of the Keep — WHISTLING CANYON glows on the horizon!');
+          Game.state = 'worldmap';
+          Game.worldCursor = Math.max(0, WORLD_NODES.findIndex(n => n.id === 'canyon'));
+          Audio2.playSong('title'); saveGame(); return;
+        }
         Game.loadMap(L.to, L.tx, L.ty); saveGame(); return;
       }
     }

@@ -2518,3 +2518,23 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   filling the freed quest-box area. drawTouchPad now takes the panel's hy and fills DOWN
   from the wallet row, so a maxed-out HUD (2 heart rows + 8 material kinds) squeezes the
   buttons instead of overlapping. Playwright run green on the new build.
+
+## v10.35 (2026-07-21) — Squall Strait goes to SEA + victory shortcuts + Twinkle's nap (Berkley requests)
+- THE SQUALL STRAIT is a true sea crossing now (13_roads, def.water): storm water spans
+  the whole strait. Falling in = a SPLASH + bouncy wave-toss (refills flaps, current
+  shoves you back a step) — never a doom pit. Sharks cruise as shadows UNDER the
+  translucent surf and LEAP in arcs with splashes; jellyfish bob ON the waves (and
+  never drift onto dry land); spark-bobs became URCHIN-MINES riding the swell; a
+  WATERSPOUT gushes on a checkpoint island. Level fully relaid: island-hop rhythm,
+  pier crossings, a mine field, and a spring-launched mega-gap bounce crossing before
+  the Gale Gull arena. Animated crest/foam/edge-wash rendering, per-column so islands
+  stay dry; deep-water gradient behind everything.
+- VICTORY EXITS jump straight to the WORLD MAP: Twinkle's portal out of the Deep, the
+  crowned bubble-surfacing (uncrowned dives still surface at the buoy), and Cerberus's
+  portal out of Hound's Keep (cursor preset on the next destination each time).
+- SIR TWINKLE only duels a TRUE fisher: he snoozes (existing dormant drift) until EVERY
+  sea creature of the Deep is caught that dive — toast shows the remaining count; the
+  tide-gate sign teaches the rule.
+- validate learned water roads (wide gaps are bounce-crossings, cap 16); playthrough
+  asserts the nap-gate; NEW suite test/_squallsea.js (20 checks: bounce physics, leap
+  cycle, surf jellies, nap wake, all three map-jump exits). ALL 45 suites green.

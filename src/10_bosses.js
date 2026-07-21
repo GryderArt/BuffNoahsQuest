@@ -56,7 +56,25 @@ const Bosses = {
     const b = Game.boss; if (!b) return;
     b.t += dt;
     if (b.caughtAnim > 0) { b.caughtAnim -= dt; if (b.caughtAnim <= 0) this.finalize(b); return; }
-    if (!b.awake) { if (dist(Player.x, Player.y, b.x, b.y) < 78) this.wake(b); return; }
+    if (!b.awake) {
+      if (dist(Player.x, Player.y, b.x, b.y) < 78) {
+        // SIR TWINKLE only duels a TRUE fisher: he naps until EVERY other sea
+        // creature in the Deep is caught (fresh school each dive)
+        if (b.name === 'twinkle') {
+          const left = Game.creatures.filter(cr => cr.state !== 'gone' && !cr.display).length;
+          if (left > 0) {
+            if (!(b.napHintT > b.t - 4)) {
+              b.napHintT = b.t;
+              Audio2.jingle('talk');
+              Game.toast('SIR TWINKLE snoozes... catch EVERY sea creature of the Deep to wake him! (' + left + ' to go)');
+            }
+            return;
+          }
+        }
+        this.wake(b);
+      }
+      return;
+    }
     if (b.sky) this.up_skyboss(b, dt); else if (b.warden) this.up_warden(b, dt); else if (b.gnash) this.up_gnash(b, dt); else this['up_' + b.name](b, dt);
   },
   // --- KING BILLY ---

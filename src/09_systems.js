@@ -387,6 +387,13 @@ const Game = {
         return;
       }
       if (o.type === 'bubble' && dist(px, py, o.x * TILE + 8, o.y * TILE + 8) < 20) {
+        if (this.map.id === 'deep' && this.flags.crown) {
+          // crowned: surfacing goes straight to the World Map (no swim-and-walk home)
+          Audio2.jingle('dive'); this.toast('The SUNKEN CROWN hums — straight UP to the World Map!');
+          this.state = 'worldmap';
+          this.worldCursor = Math.max(0, WORLD_NODES.findIndex(n => n.id === 'wastes'));
+          Audio2.playSong('title'); saveGame(); return;
+        }
         Audio2.jingle('dive'); this.loadMap(o.to, o.tx, o.ty); return;
       }
     }

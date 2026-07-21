@@ -447,7 +447,7 @@ function buildMaps() {
   SIGN(m, 5, 7, 'Glittering bubbles rise here — press SPACE to swim UP to the surface.');
   // tide gate: the single gap in the curtain
   R(m, 40, 18, 1, 2, 'gate');
-  SIGN(m, 36, 16, 'THE TIDE GATE: "EIGHT sea friends shall part the waters." (octopus, jellyfish, shark, capricorn)');
+  SIGN(m, 36, 16, 'THE TIDE GATE: "EIGHT sea friends shall part the waters." Beyond, SIR TWINKLE naps — he only wakes for the fisher who has caught EVERY creature of the Deep!');
   // Twinkle lair — a sealed bowl east of the curtain, entered ONLY via the gate
   R(m, 41, 6, 14, 32, 'seafloor');
   scatter(m, 'kelp', 42, 8, 12, 5, 9, 91, ['seafloor']);

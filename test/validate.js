@@ -180,8 +180,10 @@ for (const id of Object.keys(MAPS)) {
     H.assert(colSolid[1] && colSolid[2], id + ': spawn ground exists');
     let run = 0, maxRun = 0;
     for (let i = 0; i < W; i++) { if (!colSolid[i]) { run++; maxRun = Math.max(maxRun, run); } else run = 0; }
-    const maxGap = (def.wings ? 5 : 0) + (def.gravity < 1 ? 7 : 5);   // wings:1 roads lend flight (flap meter)
-    H.assert(maxRun <= maxGap, id + ': widest bottomless gap ' + maxRun + ' <= ' + maxGap + ' (jumpable)');
+    // water roads have NO bottomless pits — the sea splash-bounces you, so wide gaps
+    // are features (bounce-crossings), capped only at a still-sane 16 columns
+    const maxGap = def.water ? 16 : (def.wings ? 5 : 0) + (def.gravity < 1 ? 7 : 5);   // wings:1 roads lend flight (flap meter)
+    H.assert(maxRun <= maxGap, id + ': widest ' + (def.water ? 'water' : 'bottomless') + ' gap ' + maxRun + ' <= ' + maxGap + ' (' + (def.water ? 'bounceable' : 'jumpable') + ')');
     H.assert(rows.some(r => r.includes('G')), id + ': has a boss arena');
     H.assert(rows.some(r => r.includes('F')), id + ': has at least one checkpoint flag');
     let earlySpike = false;
