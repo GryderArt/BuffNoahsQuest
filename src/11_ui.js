@@ -72,7 +72,7 @@ const UI = {
     // quest hint — stretches into the space freed by GEAR + the version stamp.
     // TOUCH devices trade this spot for the Z/X/C + SPACE action pad (32b_touch;
     // the quest text moves into the "..." menu's QUEST item).
-    if (G.NQ_TOUCH && UI.drawTouchPad) { UI.drawTouchPad(c); }
+    if (G.NQ_TOUCH && UI.drawTouchPad) { UI.drawTouchPad(c, hy); }
     else {
       const qh = Math.max(74, SH - 16 - hy);
       c.fillStyle = '#181020'; c.fillRect(X + 6, hy, PANEL_W - 12, qh);

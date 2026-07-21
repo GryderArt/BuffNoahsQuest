@@ -136,15 +136,17 @@
   bootCanvas = function () { _bootCanvas(); if (G.NQ_TOUCH) installTouch(); };
 
   // ---------- the action pad in the HUD panel (called from 11_ui in the QUEST spot) ----------
-  UI.drawTouchPad = function (c) {
+  UI.drawTouchPad = function (c, hy) {
     const x0 = VW + 8, w = PANEL_W - 16;                   // 160 wide
-    const sy = SH - 32, zy = sy - 42;                      // SPACE bar + Z/X/C row, bottom-anchored
-    BTN_DEFS.forEach((b, i) => {
-      const bx = x0 + i * 55, r = { x: bx, y: zy, w: 50, h: 36, k: b.k };
+    const sy = SH - 40;                                    // SPACE bar top (h 34, margin 6)
+    const zy = Math.max((hy || 0) + 2, sy - 53);           // Z/X/C fill down from the wallet row...
+    const zh = sy - 6 - zy;                                // ...normally 47 tall (fat-finger friendly);
+    BTN_DEFS.forEach((b, i) => {                           // a maxed-out HUD squeezes them, never overlaps
+      const bx = x0 + i * 55, r = { x: bx, y: zy, w: 50, h: zh, k: b.k };
       T.btns.push(r);
       drawTouchBtn(c, r, b.k.toUpperCase(), b.cap);
     });
-    const sr = { x: x0, y: sy, w: w, h: 26, k: ' ' };
+    const sr = { x: x0, y: sy, w: w, h: 34, k: ' ' };
     T.btns.push(sr);
     drawTouchBtn(c, sr, 'SPACE', 'TALK / CHECK');
   };
@@ -152,8 +154,8 @@
     const on = !!KEYS[r.k];
     c.fillStyle = on ? '#4878e8' : '#181020'; c.fillRect(r.x, r.y, r.w, r.h);
     c.strokeStyle = on ? '#f8d048' : '#5a4a78'; c.strokeRect(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1);
-    const bs = r.h >= 30 ? 13 : 10;
-    drawText(c, big, r.x + r.w / 2, r.y + (cap ? 5 : (r.h - bs) / 2), bs, '#fff', null, 'center');
+    const bs = r.h >= 44 ? 15 : r.h >= 30 ? 13 : 10;
+    drawText(c, big, r.x + r.w / 2, r.y + (cap ? Math.max(5, (r.h - bs) / 2 - 5) : (r.h - bs) / 2), bs, '#fff', null, 'center');
     if (cap) drawText(c, cap, r.x + r.w / 2, r.y + r.h - 11, 6, on ? '#d8e8ff' : '#a89cc0', null, 'center');
   }
 

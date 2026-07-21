@@ -2512,3 +2512,9 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   lifting. Same touch-id tracking + KEYS/PRESS_QUEUE plumbing as before; no logic changes.
 - Verified: full 21-check playwright run green on the new build (the drag test now rides
   the pad), screenshots m2/m3 show the pad idle + RIGHT pressed while Noah walks.
+
+## v10.34 (2026-07-21) — fat-finger buttons (Berkley request)
+- The HUD action pad grew ~30%: Z/X/C 36 -> 47 tall (letters 13 -> 15px), SPACE 26 -> 34,
+  filling the freed quest-box area. drawTouchPad now takes the panel's hy and fills DOWN
+  from the wallet row, so a maxed-out HUD (2 heart rows + 8 material kinds) squeezes the
+  buttons instead of overlapping. Playwright run green on the new build.
