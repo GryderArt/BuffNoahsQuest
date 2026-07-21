@@ -61,8 +61,23 @@ Game.updateZip = function (dt) {
 };
 {
   const _int = Game.interact;
+  // An UNOPENED chest in reach wins SPACE over a zip-wire: the Crossing's practice-wire
+  // anchor shares its tile with the starter chest, and the ride was eating the chest
+  // forever. Same reach math as 09_systems.interact's chest branch, so the priorities
+  // agree exactly. Once the chest is looted, the wire gets SPACE back.
+  Game.chestInReach = function () {
+    const m = this.map; if (!m) return false;
+    const px = Player.x, py = Player.y, [dx, dy] = DIRS[Player.dir] || [0, 1];
+    const tx = px + dx * 14, ty = py + dy * 14;
+    for (const o of m.objects) {
+      if (o.type !== 'chest' || this.flags.openedChests[o.id]) continue;
+      const ox = o.x * TILE + 8, oy = o.y * TILE + 8;
+      if (dist(px, py, ox, oy) < 22 || dist(tx, ty, ox, oy) < 12) return true;
+    }
+    return false;
+  };
   Game.interact = function () {
-    if (this.state === 'play' && this.tryZip && this.tryZip()) return;
+    if (this.state === 'play' && this.tryZip && !this.chestInReach() && this.tryZip()) return;
     return _int.call(this);
   };
 }

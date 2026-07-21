@@ -2490,3 +2490,14 @@ A standalone, single-file visual level editor (open it in a browser; no build/se
   detection, slot-tap start, tap-through intro, joystick walk, Z/X/C/SPACE press+release,
   menu items (pack/map/quest/close), desktop untouched with zero touch chrome; all 44 node
   suites green; editor test green; screenshots touchshots/m1-m10.
+
+## v10.32 (2026-07-21) — the Crossing's trapped starter chest (Berkley bug report)
+- The practice-wire anchor and the 4-gem chest share tile (4,16) in the Cliffside
+  Crossing, and the crags Game.interact wrapper gave tryZip first claim on SPACE —
+  so the ride (or the gloveless slip-shove) ate the chest press forever.
+- Fix in 27_valecrags: Game.chestInReach() (same reach math as 09_systems' chest
+  branch) — an UNOPENED chest in reach now wins SPACE; once looted, the wire gets
+  SPACE back. Sealed chests also win (you get the seal message, not a silent ride).
+- New permanent suite test/_chestzip.js: chest-first-then-zip with gloves, gloveless
+  slip-shove after loot, normal chests + chestless wires unaffected. validate smoke
+  playthrough _crags _materials green.
